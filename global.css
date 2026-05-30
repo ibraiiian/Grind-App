@@ -1,0 +1,12 @@
+/* GRIND App — Global CSS for NativeWind */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html, body, #root {
+    height: 100%;
+    width: 100%;
+    background-color: #000000;
+  }
+}
