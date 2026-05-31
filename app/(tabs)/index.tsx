@@ -144,7 +144,7 @@ export default function HomeScreen() {
 
           <View className="flex-1 relative justify-center">
             <TextInput
-              className="text-white text-lg font-bold italic mr-3 z-10 h-8"
+              className="text-white text-lg font-bold italic mr-3 z-10 h-8 pt-1"
               placeholder="what's the grind today?"
               placeholderTextColor="#fff"
               value={captureText}
@@ -155,8 +155,8 @@ export default function HomeScreen() {
             />
             {/* The scribble underline should always be under the placeholder */}
             {!captureText && (
-              <View className="absolute bottom-[-6px] left-[0px] z-0 opacity-90">
-                <ScribbleUnderline width={210} height={12} color="#fff" />
+              <View className="absolute pointer-events-none z-0" style={{ left: 0, top: -25 }}>
+                <ScribbleUnderline width={220} height={110} />
               </View>
             )}
           </View>
