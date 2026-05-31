@@ -24,10 +24,10 @@ interface DeadlineBadgeProps {
 }
 
 const badgeStyles: Record<DeadlineStatus, { bg: string; text: string; border?: string }> = {
-  urgent: { bg: colors.urgentBg, text: colors.urgent, border: 'rgba(239, 68, 68, 0.3)' },
-  warning: { bg: colors.warningBg, text: colors.gray500 },
-  safe: { bg: colors.safeBg, text: colors.safe },
-  done: { bg: colors.gray950, text: colors.done },
+  urgent: { bg: 'transparent', text: colors.urgent, border: colors.urgent },
+  warning: { bg: 'transparent', text: colors.white, border: colors.white },
+  safe: { bg: 'transparent', text: colors.white, border: colors.white },
+  done: { bg: 'transparent', text: colors.done, border: colors.done },
 };
 
 export function DeadlineBadge({ deadline, status, isUrgent }: DeadlineBadgeProps) {

@@ -10,23 +10,25 @@
 
 import { Tabs } from 'expo-router';
 import { View, Text } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
 import { colors } from '@/constants/colors';
-import { ComponentProps } from 'react';
 
-type IoniconsName = ComponentProps<typeof Ionicons>['name'];
+import HomeIcon from '@/assets/svg/icons/home.svg';
+import FolderIcon from '@/assets/svg/icons/folder.svg';
+import CheckSquareIcon from '@/assets/svg/icons/check-square.svg';
+import ZapIcon from '@/assets/svg/icons/zap.svg';
+import UserIcon from '@/assets/svg/icons/user.svg';
 
 interface TabIconProps {
-  name: IoniconsName;
+  IconComponent: any;
   color: string;
   focused: boolean;
   isHome?: boolean;
 }
 
-function TabIcon({ name, color, focused, isHome }: TabIconProps) {
+function TabIcon({ IconComponent, color, focused, isHome }: TabIconProps) {
   return (
     <View className="items-center justify-center pt-2">
-      <Ionicons name={name} size={24} color={color} />
+      <IconComponent width={24} height={24} color={color} />
 
       {/* Active dot indicator */}
       {focused && (
@@ -86,7 +88,7 @@ export default function TabsLayout() {
         name="index"
         options={{
           tabBarIcon: ({ color, focused }) => (
-            <TabIcon name="home" color={color} focused={focused} isHome />
+            <TabIcon IconComponent={HomeIcon} color={color} focused={focused} isHome />
           ),
         }}
       />
@@ -94,7 +96,7 @@ export default function TabsLayout() {
         name="folders"
         options={{
           tabBarIcon: ({ color, focused }) => (
-            <TabIcon name="folder-outline" color={color} focused={focused} />
+            <TabIcon IconComponent={FolderIcon} color={color} focused={focused} />
           ),
         }}
       />
@@ -102,7 +104,7 @@ export default function TabsLayout() {
         name="tasks"
         options={{
           tabBarIcon: ({ color, focused }) => (
-            <TabIcon name="checkbox-outline" color={color} focused={focused} />
+            <TabIcon IconComponent={CheckSquareIcon} color={color} focused={focused} />
           ),
         }}
       />
@@ -110,7 +112,7 @@ export default function TabsLayout() {
         name="prompts"
         options={{
           tabBarIcon: ({ color, focused }) => (
-            <TabIcon name="flash" color={color} focused={focused} />
+            <TabIcon IconComponent={ZapIcon} color={color} focused={focused} />
           ),
         }}
       />
@@ -118,7 +120,7 @@ export default function TabsLayout() {
         name="profile"
         options={{
           tabBarIcon: ({ color, focused }) => (
-            <TabIcon name="person-outline" color={color} focused={focused} />
+            <TabIcon IconComponent={UserIcon} color={color} focused={focused} />
           ),
         }}
       />

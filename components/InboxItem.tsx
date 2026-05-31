@@ -39,6 +39,8 @@ function renderRightActions() {
   );
 }
 
+import ChevronRight from '@/assets/svg/icons/chevron-right.svg';
+
 export function InboxItem({ item, onDelete, onProcess }: InboxItemProps) {
   return (
     <Swipeable
@@ -51,14 +53,14 @@ export function InboxItem({ item, onDelete, onProcess }: InboxItemProps) {
       overshootLeft={false}
       overshootRight={false}
     >
-      <TouchableOpacity className="bg-gray-900 rounded-2xl px-4 py-3.5 flex-row items-center">
+      <TouchableOpacity className="bg-black border border-white rounded-2xl px-4 py-3.5 flex-row items-center">
         <Text
           className="flex-1 text-white text-sm"
           numberOfLines={1}
         >
           {item.content}
         </Text>
-        <Ionicons name="chevron-forward" size={16} color={colors.gray500} />
+        <ChevronRight width={16} height={16} color={colors.white} />
       </TouchableOpacity>
     </Swipeable>
   );

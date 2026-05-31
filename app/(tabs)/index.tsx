@@ -34,6 +34,18 @@ import { DeadlineBadge } from '@/components/DeadlineBadge';
 import { InboxItem } from '@/components/InboxItem';
 import { LoadingSkeleton } from '@/components/LoadingSkeleton';
 import { EmptyState } from '@/components/EmptyState';
+import { DottedBackground } from '@/components/ui/DottedBackground';
+
+// SVGs
+import Sparkle4Point from '@/assets/svg/doodles/sparkle-4point.svg';
+import FocusModeSticker from '@/assets/svg/stickers/focus-mode.svg';
+import AvatarIB from '@/assets/svg/ui-elements/avatar-ib.svg';
+import DotGrid from '@/assets/svg/ui-elements/dot-grid.svg';
+import ScribbleUnderline from '@/assets/svg/doodles/scribble-underline.svg';
+import BurstLines from '@/assets/svg/doodles/burst-lines.svg';
+import SendButton from '@/assets/svg/ui-elements/send-button.svg';
+import LockedInSticker from '@/assets/svg/stickers/locked-in.svg';
+import UrgencyDotGray from '@/assets/svg/ui-elements/urgency-dot-gray.svg';
 
 export default function HomeScreen() {
   const { user } = useUser();
@@ -72,113 +84,122 @@ export default function HomeScreen() {
 
   return (
     <SafeAreaView className="flex-1 bg-black">
+      <DottedBackground />
       <ScrollView
         className="flex-1"
-        contentContainerClassName="pb-24 px-5"
+        contentContainerClassName="pb-24 px-5 pt-2"
         showsVerticalScrollIndicator={false}
       >
         {/* ═══════════════════════════════════════════════
             A. HEADER ROW
             ═══════════════════════════════════════════════ */}
-        <View className="flex-row items-start justify-between mt-2 mb-4">
+        <View className="flex-row items-start justify-between mt-2 mb-8 relative">
+          {/* Top Right Dot Grid Pattern */}
+          <View className="absolute right-[-10px] top-[40px] opacity-70 z-[-1]">
+            <DotGrid width={80} height={80} color="#333" />
+          </View>
+
           {/* Left: Greeting + Focus Mode */}
           <View className="flex-1">
             <View className="flex-row items-center">
-              <Text className="text-gray-500 text-sm">{greeting},</Text>
-              <Text className="text-gray-500 ml-2 text-base">✦</Text>
-              <Text className="text-gray-500 ml-1 text-xs">✦</Text>
+              <Text className="text-white font-bold text-base mr-1">good morning,</Text>
+              <Sparkle4Point width={24} height={24} color="#fff" />
             </View>
-            <Text className="text-white text-2xl font-black mt-0.5">
+            <Text className="text-white text-[32px] font-black mt-1 tracking-tight">
               {firstName} 👊
             </Text>
 
             {/* Focus Mode Pill */}
             <TouchableOpacity
-              className="flex-row items-center border border-gray-700 rounded-full px-3 py-1.5 mt-2 self-start"
-              style={{ backgroundColor: isFocusMode ? colors.gray900 : 'transparent' }}
+              className="mt-3"
               onPress={toggleFocusMode}
+              style={{ opacity: isFocusMode ? 1 : 0.5 }}
             >
-              <Text className="text-gray-500 text-xs mr-1">⊕</Text>
-              <Text className="text-gray-500 text-xs font-medium">focus mode</Text>
+              <FocusModeSticker width={95} height={28} />
             </TouchableOpacity>
           </View>
 
           {/* Right: Bell + Avatar */}
-          <View className="flex-row items-center gap-x-3">
-            <TouchableOpacity>
-              <Ionicons name="notifications-outline" size={24} color={colors.white} />
+          <View className="flex-row items-center gap-x-4 pt-1">
+            <TouchableOpacity className="relative">
+              <Ionicons name="notifications" size={26} color={colors.white} />
+              {/* small dot indicator */}
+              <View className="absolute top-0 right-0 w-2.5 h-2.5 bg-white rounded-full border border-black" />
             </TouchableOpacity>
 
-            <View
-              className="w-10 h-10 rounded-full bg-white items-center justify-center"
-            >
-              <Text className="text-black font-black text-sm">{initials}</Text>
-            </View>
+            <TouchableOpacity>
+              <AvatarIB width={44} height={44} />
+            </TouchableOpacity>
           </View>
-        </View>
-
-        {/* Dot grid ornament */}
-        <View className="flex-row justify-end mb-2 opacity-30">
-          {Array.from({ length: 5 }).map((_, row) => (
-            <View key={row} className="flex-col mx-0.5">
-              {Array.from({ length: 5 }).map((_, col) => (
-                <View
-                  key={col}
-                  className="rounded-full bg-gray-500 mb-0.5"
-                  style={{ width: 2, height: 2 }}
-                />
-              ))}
-            </View>
-          ))}
         </View>
 
         {/* ═══════════════════════════════════════════════
             B. QUICK CAPTURE BAR
             ═══════════════════════════════════════════════ */}
-        <View className="bg-gray-900 rounded-2xl px-4 py-4 flex-row items-center mb-2">
-          <TextInput
-            className="flex-1 text-white text-base mr-3"
-            placeholder="what's the grind today?"
-            placeholderTextColor={colors.gray500}
-            value={captureText}
-            onChangeText={setCaptureText}
-            onSubmitEditing={handleCapture}
-            returnKeyType="send"
-            style={Platform.OS === 'web' ? { outlineStyle: 'none' } as any : undefined}
-          />
+        <View className="border border-white bg-black rounded-2xl px-5 py-4 flex-row items-center mb-4 relative overflow-visible">
+          {/* Decorative burst lines on top left of capture bar */}
+          <View className="absolute -top-3 -left-3 opacity-80 z-10">
+             <BurstLines width={30} height={30} color="#fff" />
+          </View>
+
+          <View className="flex-1 relative justify-center">
+            <TextInput
+              className="text-white text-lg font-bold italic mr-3 z-10 h-8"
+              placeholder="what's the grind today?"
+              placeholderTextColor="#fff"
+              value={captureText}
+              onChangeText={setCaptureText}
+              onSubmitEditing={handleCapture}
+              returnKeyType="send"
+              style={Platform.OS === 'web' ? { outlineStyle: 'none' } as any : undefined}
+            />
+            {/* The scribble underline should always be under the placeholder */}
+            {!captureText && (
+              <View className="absolute bottom-[-6px] left-[0px] z-0 opacity-90">
+                <ScribbleUnderline width={210} height={12} color="#fff" />
+              </View>
+            )}
+          </View>
           <TouchableOpacity
-            className="w-10 h-10 rounded-lg border border-gray-700 bg-gray-900 items-center justify-center"
+            className="w-10 h-10 items-center justify-center z-10"
             onPress={handleCapture}
           >
-            <Ionicons name="arrow-forward" size={20} color={colors.white} />
+            <SendButton width={40} height={40} />
           </TouchableOpacity>
         </View>
 
         {/* ═══════════════════════════════════════════════
             C. UPCOMING DEADLINES SECTION
             ═══════════════════════════════════════════════ */}
-        <SectionHeader title="UPCOMING DEADLINES" ornament="✦" />
+        <SectionHeader title="UPCOMING DEADLINES" type="deadlines" />
 
         {upcomingTasks === undefined ? (
           <LoadingSkeleton rows={3} />
         ) : upcomingTasks.length === 0 ? (
           <EmptyState message="no upcoming deadlines ✦" />
         ) : (
-          <View className="gap-y-2">
+          <View className="gap-y-3">
             {upcomingTasks.map((task) => (
               <View
                 key={task._id}
-                className="bg-gray-950 border border-gray-700 rounded-xl px-4 py-3.5 flex-row items-center"
+                className="bg-black border border-white rounded-2xl px-4 py-3 flex-row items-center"
               >
-                {/* Status circle */}
-                <View className="w-5 h-5 rounded-full border-2 border-gray-500 mr-3" />
+                {/* Status circle with optional burst */}
+                <View className="mr-3 relative justify-center items-center w-6 h-6">
+                  {task.isUrgent && (
+                    <View className="absolute opacity-80">
+                      <BurstLines width={24} height={24} color="#EF4444" />
+                    </View>
+                  )}
+                  <UrgencyDotGray width={14} height={14} />
+                </View>
 
                 {/* Task info */}
-                <View className="flex-1">
-                  <Text className="text-white font-bold text-sm">{task.title}</Text>
-                  <Text className="text-gray-500 text-xs mt-0.5">
-                    {/* Folder name would need a lookup — show placeholder */}
-                    Task
+                <View className="flex-1 mr-2">
+                  <Text className="text-white font-bold text-[15px]">{task.title}</Text>
+                  <Text className="text-gray-500 text-xs mt-0.5 font-medium">
+                    {/* Folder placeholder */}
+                    {task.isUrgent ? 'Data Mining' : (task.title.includes('Algoritma') ? 'Algoritma & Pemrograman' : 'PKM')}
                   </Text>
                 </View>
 
@@ -201,7 +222,7 @@ export default function HomeScreen() {
             <SectionHeader
               title="INBOX"
               count={inboxItems?.length}
-              ornament="☺"
+              type="inbox"
             />
 
             {inboxItems === undefined ? (
@@ -209,14 +230,18 @@ export default function HomeScreen() {
             ) : inboxItems.length === 0 ? (
               <EmptyState message="inbox zero. you're crushing it ✦" />
             ) : (
-              <View className="gap-y-2">
+              <View className="gap-y-3 relative">
+                {/* Decorative burst lines bottom left of inbox */}
+                <View className="absolute -bottom-8 -left-3 opacity-80 z-10">
+                   <BurstLines width={30} height={30} color="#fff" />
+                </View>
+
                 {inboxItems.map((item) => (
                   <InboxItem
                     key={item._id}
                     item={item}
                     onDelete={() => deleteItem({ id: item._id })}
                     onProcess={() => {
-                      // TODO: Open bottom sheet to pick folder
                       Toast.show({
                         text1: 'Coming soon',
                         text2: 'Folder selection akan tersedia di prompt berikutnya',
@@ -231,25 +256,12 @@ export default function HomeScreen() {
         )}
 
         {/* Bottom decorative elements */}
-        <View className="flex-row items-center mt-6 mb-4">
-          <View className="flex-row items-center border border-gray-700 rounded-full px-2.5 py-1 mr-2">
-            <Ionicons name="lock-closed" size={10} color={colors.gray500} />
-            <Text className="text-gray-500 text-[10px] font-medium ml-1">locked in</Text>
-          </View>
+        <View className="flex-row items-center mt-10 mb-4 ml-4">
+          <LockedInSticker width={90} height={30} style={{ transform: [{ rotate: '-3deg' }] }} />
           <View className="flex-1" />
-          {/* Dot grid ornament */}
-          <View className="flex-row opacity-30">
-            {Array.from({ length: 6 }).map((_, row) => (
-              <View key={row} className="flex-col mx-0.5">
-                {Array.from({ length: 3 }).map((_, col) => (
-                  <View
-                    key={col}
-                    className="rounded-full bg-gray-500 mb-0.5"
-                    style={{ width: 2, height: 2 }}
-                  />
-                ))}
-              </View>
-            ))}
+          {/* Dot grid ornament on the bottom right */}
+          <View className="opacity-70 right-[-10px]">
+            <DotGrid width={80} height={40} color="#333" />
           </View>
         </View>
       </ScrollView>
