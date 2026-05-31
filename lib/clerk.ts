@@ -25,6 +25,21 @@ export const useAuth = isDummyKey
     })
   : ClerkReal.useAuth;
 
+export const useUser = isDummyKey
+  ? () => ({
+      isLoaded: true,
+      isSignedIn: false,
+      user: {
+        id: 'mock-user-id',
+        firstName: 'User',
+        lastName: '',
+        fullName: 'User',
+        primaryEmailAddress: { emailAddress: 'user@example.com' },
+        imageUrl: null,
+      },
+    })
+  : ClerkReal.useUser;
+
 export const useSignIn = isDummyKey 
   ? () => ({
       isLoaded: true,
