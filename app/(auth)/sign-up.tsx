@@ -1,4 +1,4 @@
-import { useOAuth, useSignUp } from "@/lib/clerk";
+import { useOAuth, useSignUp, isDummyKey } from "@/lib/clerk";
 import { Link, useRouter } from "expo-router";
 import { useState, useCallback } from "react";
 import { 
@@ -50,10 +50,11 @@ export default function SignUpScreen() {
     // Validate
     const result = signUpSchema.safeParse({ fullName, email, password });
     if (!result.success) {
+      const firstIssue = result.error.issues?.[0] || result.error.errors?.[0];
       Toast.show({
         type: "error",
         text1: "Validation Error",
-        text2: result.error.errors[0].message,
+        text2: firstIssue?.message || "Invalid input",
       });
       return;
     }
@@ -76,11 +77,13 @@ export default function SignUpScreen() {
         await setActive({ session: signUpAttempt.createdSessionId });
         
         // Sync to Convex
-        await upsertUser({
-          clerkId: signUpAttempt.createdUserId,
-          email: email,
-          name: fullName,
-        });
+        if (!isDummyKey) {
+          await upsertUser({
+            clerkId: signUpAttempt.createdUserId,
+            email: email,
+            name: fullName,
+          });
+        }
 
         router.replace("/(tabs)");
       } else {

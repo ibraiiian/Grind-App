@@ -4,7 +4,7 @@ import { ConvexProvider } from "convex/react";
 import { ConvexProviderWithClerk } from "convex/react-clerk";
 
 const EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY = process.env.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY || "";
-const isDummyKey = !EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY || 
+export const isDummyKey = !EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY || 
   EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY.includes("dummy") || 
   EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY.startsWith("pk_test_ZHVtbXk");
 
