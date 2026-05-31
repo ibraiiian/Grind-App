@@ -38,6 +38,14 @@ export function useTasks(folderId: Id<'folders'>) {
 }
 
 /**
+ * Get task counts for a folder (todo, inProgress, done).
+ */
+export function useTaskCounts(folderId: Id<'folders'>) {
+  const counts = useQuery(api.tasks.getTaskCounts, { folderId });
+  return { counts };
+}
+
+/**
  * Get all tasks for the current user (Global Task List).
  */
 export function useAllTasks() {

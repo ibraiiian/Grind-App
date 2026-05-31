@@ -132,3 +132,13 @@ export const deleteFolder = mutation({
     await ctx.db.delete(args.id);
   },
 });
+
+/**
+ * Get a specific folder by ID.
+ */
+export const getFolder = query({
+  args: { id: v.id('folders') },
+  handler: async (ctx, args) => {
+    return await ctx.db.get(args.id);
+  },
+});

@@ -61,7 +61,7 @@ function AuthGuard() {
     <Stack screenOptions={{ headerShown: false }}>
       <Stack.Screen name="(auth)" options={{ headerShown: false }} />
       <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-      <Stack.Screen name="modals" options={{ presentation: "modal", headerShown: false }} />
+      <Stack.Screen name="modals" options={{ presentation: "transparentModal", headerShown: false, animation: 'fade' }} />
     </Stack>
   );
 }

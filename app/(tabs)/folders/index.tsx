@@ -1,9 +1,168 @@
-import { View, Text } from "react-native";
+import { useState } from 'react';
+import { View, Text, TextInput, TouchableOpacity, FlatList, Alert } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { useRouter } from 'expo-router';
+import { Ionicons } from '@expo/vector-icons';
+import { useActionSheet } from '@expo/react-native-action-sheet';
 
-export default function FoldersPlaceholder() {
+import { useFolders } from '@/hooks/useFolders';
+import { FolderCard } from '@/components/FolderCard';
+import { LoadingSkeleton } from '@/components/LoadingSkeleton';
+import { EmptyState } from '@/components/EmptyState';
+import { colors } from '@/constants/colors';
+import { Id } from '@/convex/_generated/dataModel';
+
+// SVGs
+import SmileyDoodle from '@/assets/svg/doodles/smiley.svg';
+import SquiggleArrow from '@/assets/svg/doodles/squiggle-arrow.svg';
+import DotGrid from '@/assets/svg/ui-elements/dot-grid.svg';
+import BurstLines from '@/assets/svg/doodles/burst-lines.svg';
+
+export default function FolderGridScreen() {
+  const router = useRouter();
+  const { showActionSheetWithOptions } = useActionSheet();
+  const { folders, archivedFolders, archiveFolder, deleteFolder } = useFolders();
+  
+  const [searchQuery, setSearchQuery] = useState('');
+  const [showArchived, setShowArchived] = useState(false);
+
+  const activeFolders = folders ?? [];
+  const archived = archivedFolders ?? [];
+  
+  const displayFolders = showArchived ? archived : activeFolders;
+  const filteredFolders = displayFolders.filter((f) => 
+    f.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  const handleLongPress = (folderId: Id<'folders'>, folderName: string) => {
+    const options = ['Rename', 'Archive', 'Delete', 'Cancel'];
+    const destructiveButtonIndex = 2;
+    const cancelButtonIndex = 3;
+
+    showActionSheetWithOptions(
+      {
+        options,
+        cancelButtonIndex,
+        destructiveButtonIndex,
+      },
+      (selectedIndex) => {
+        if (selectedIndex === 0) {
+          // Rename - could open a modal or prompt. For now, navigate to new folder with edit mode?
+          // The prompt says "buka modal kecil dengan TextInput pre-filled".
+          // We can navigate to the modal and pass ID.
+          Alert.alert('Coming soon', 'Rename folder feature will be implemented in the next step.');
+        } else if (selectedIndex === 1) {
+          archiveFolder({ id: folderId });
+        } else if (selectedIndex === 2) {
+          Alert.alert(
+            'Hapus folder ini?',
+            'Semua task, catatan, dan prompt di dalamnya akan ikut terhapus.',
+            [
+              { text: 'Batal', style: 'cancel' },
+              { text: 'Hapus', style: 'destructive', onPress: () => deleteFolder({ id: folderId }) },
+            ]
+          );
+        }
+      }
+    );
+  };
+
   return (
-    <View className="flex-1 bg-black items-center justify-center">
-      <Text className="text-white font-bold">folders placeholder</Text>
-    </View>
+    <SafeAreaView className="flex-1 bg-black">
+      <View className="flex-1 px-5 pt-4">
+        {/* HEADER ROW */}
+        <View className="flex-row items-start justify-between mb-6">
+          <View className="flex-1 relative">
+            <View className="flex-row items-end">
+              <Text className="font-black text-[38px] text-white lowercase tracking-tight">my folders.</Text>
+              <View className="ml-2 mb-2">
+                <SmileyDoodle width={36} height={36} color="#fff" />
+              </View>
+            </View>
+            <Text className="text-sm text-gray-500 mt-1">
+              {activeFolders.length} active · {archived.length} archived
+            </Text>
+          </View>
+          
+          <TouchableOpacity 
+            className="w-11 h-11 border border-gray-700 rounded-xl items-center justify-center mt-1"
+            onPress={() => router.push('/modals/new-folder')}
+          >
+            <Ionicons name="add" size={24} color="white" />
+          </TouchableOpacity>
+        </View>
+
+        {/* SEARCH BAR */}
+        <View className="bg-gray-900 border border-gray-800 rounded-xl px-4 py-3 flex-row items-center mb-6">
+          <Ionicons name="search" size={20} color={colors.gray500} />
+          <TextInput
+            className="flex-1 text-white text-base ml-3"
+            placeholder="search folders..."
+            placeholderTextColor={colors.gray500}
+            value={searchQuery}
+            onChangeText={setSearchQuery}
+          />
+        </View>
+
+        {/* FOLDER GRID */}
+        {folders === undefined ? (
+          <LoadingSkeleton rows={4} />
+        ) : filteredFolders.length === 0 ? (
+          <EmptyState message="Belum ada folder. Buat folder pertamamu!" />
+        ) : (
+          <FlatList
+            data={filteredFolders}
+            keyExtractor={(item) => item._id}
+            numColumns={2}
+            columnWrapperStyle={{ gap: 12 }}
+            contentContainerStyle={{ gap: 12, paddingBottom: 120 }}
+            showsVerticalScrollIndicator={false}
+            renderItem={({ item }) => (
+              <FolderCard
+                folder={item}
+                taskCount={0} // We will need to compute this or pass it. For now, placeholder 0, or we could fetch it.
+                noteCount={0} // same
+                onPress={() => router.push(`/folders/${item._id}`)}
+                onLongPress={() => handleLongPress(item._id, item.name)}
+              />
+            )}
+            ListFooterComponent={() => (
+              archived.length > 0 && !searchQuery ? (
+                <TouchableOpacity 
+                  className="mt-6 mb-12"
+                  onPress={() => setShowArchived(!showArchived)}
+                >
+                  <Text className="text-center text-gray-500 text-sm">
+                    {showArchived ? 'Sembunyikan arsip' : `Lihat ${archived.length} arsip`}
+                  </Text>
+                </TouchableOpacity>
+              ) : null
+            )}
+          />
+        )}
+      </View>
+
+      {/* BOTTOM DECORATIONS */}
+      <View className="absolute bottom-8 left-5 pointer-events-none opacity-80">
+        <SquiggleArrow width={70} height={50} color="#fff" />
+      </View>
+      <View className="absolute bottom-8 left-1/2 -ml-[40px] pointer-events-none opacity-50">
+        <DotGrid width={80} height={40} color="#fff" />
+      </View>
+
+      {/* FAB BUTTON */}
+      <View className="absolute bottom-6 right-6">
+        <View className="absolute -top-4 -left-4 opacity-90 rotate-[-15deg]">
+          <BurstLines width={32} height={32} color="#fff" />
+        </View>
+        <TouchableOpacity
+          className="w-14 h-14 bg-white rounded-full items-center justify-center shadow-lg"
+          onPress={() => router.push('/modals/new-folder')}
+          activeOpacity={0.8}
+        >
+          <Ionicons name="add" size={28} color="black" />
+        </TouchableOpacity>
+      </View>
+    </SafeAreaView>
   );
 }
