@@ -60,11 +60,13 @@ export const useSignUp = isDummyKey
         create: async () => ({
           status: "complete",
           createdSessionId: "mock-session-id",
+          createdUserId: "mock-user-id",
         }),
         prepareEmailAddressVerification: async () => {},
         attemptEmailAddressVerification: async () => ({
           status: "complete",
           createdSessionId: "mock-session-id",
+          createdUserId: "mock-user-id",
         }),
       },
       setActive: async () => {},

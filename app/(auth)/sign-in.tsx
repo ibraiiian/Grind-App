@@ -64,11 +64,19 @@ export default function SignInScreen() {
         });
       }
     } catch (err: any) {
-      console.error(JSON.stringify(err, null, 2));
+      console.error("Sign in error:", err);
+      
+      let errorMsg = "Something went wrong.";
+      if (err?.errors && Array.isArray(err.errors) && err.errors.length > 0) {
+        errorMsg = err.errors[0].longMessage || err.errors[0].message || errorMsg;
+      } else if (err?.message) {
+        errorMsg = err.message;
+      }
+      
       Toast.show({
         type: "error",
         text1: "Error",
-        text2: err.errors?.[0]?.message || "Something went wrong.",
+        text2: errorMsg,
       });
     } finally {
       setIsLoading(false);
