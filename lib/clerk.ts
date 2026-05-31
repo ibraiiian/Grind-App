@@ -14,29 +14,31 @@ export const ClerkProvider = isDummyKey
     }
   : ClerkReal.ClerkProvider;
 
+let dummyIsSignedIn = false;
+
 export const useAuth = isDummyKey 
   ? () => ({
       isLoaded: true,
-      isSignedIn: false,
-      userId: null,
-      sessionId: null,
+      get isSignedIn() { return dummyIsSignedIn; },
+      get userId() { return dummyIsSignedIn ? 'mock-user-id' : null; },
+      get sessionId() { return dummyIsSignedIn ? 'mock-session-id' : null; },
       getToken: async () => null,
-      signOut: async () => {},
+      signOut: async () => { dummyIsSignedIn = false; },
     })
   : ClerkReal.useAuth;
 
 export const useUser = isDummyKey
   ? () => ({
       isLoaded: true,
-      isSignedIn: false,
-      user: {
+      get isSignedIn() { return dummyIsSignedIn; },
+      user: dummyIsSignedIn ? {
         id: 'mock-user-id',
         firstName: 'User',
         lastName: '',
         fullName: 'User',
         primaryEmailAddress: { emailAddress: 'user@example.com' },
         imageUrl: null,
-      },
+      } : null,
     })
   : ClerkReal.useUser;
 
@@ -49,7 +51,7 @@ export const useSignIn = isDummyKey
           createdSessionId: "mock-session-id",
         }),
       },
-      setActive: async () => {},
+      setActive: async () => { dummyIsSignedIn = true; },
     })
   : ClerkReal.useSignIn;
 
@@ -69,16 +71,19 @@ export const useSignUp = isDummyKey
           createdUserId: "mock-user-id",
         }),
       },
-      setActive: async () => {},
+      setActive: async () => { dummyIsSignedIn = true; },
     })
   : ClerkReal.useSignUp;
 
 export const useOAuth = isDummyKey
   ? () => ({
-      startOAuthFlow: async () => ({
-        createdSessionId: "mock-session-id",
-        setActive: async () => {},
-      }),
+      startOAuthFlow: async () => {
+        dummyIsSignedIn = true;
+        return {
+          createdSessionId: "mock-session-id",
+          setActive: async () => { dummyIsSignedIn = true; },
+        };
+      },
     })
   : ClerkReal.useOAuth;
 
