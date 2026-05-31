@@ -1,8 +1,7 @@
-import { View, Text, TouchableOpacity } from 'react-native';
+import { View, Text, TouchableOpacity, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Stack, useRouter, usePathname, Slot, useLocalSearchParams } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
-import { useActionSheet } from '@expo/react-native-action-sheet';
 import { useFolderById, useFolders } from '@/hooks/useFolders';
 import Sparkle4Point from '@/assets/svg/doodles/sparkle-4point.svg';
 import { Id } from '@/convex/_generated/dataModel';
@@ -11,7 +10,6 @@ export default function FolderWorkspaceLayout() {
   const router = useRouter();
   const pathname = usePathname();
   const { folderId } = useLocalSearchParams<{ folderId: Id<'folders'> }>();
-  const { showActionSheetWithOptions } = useActionSheet();
   
   const folder = useFolderById(folderId);
   const { archiveFolder, deleteFolder } = useFolders();
@@ -22,27 +20,28 @@ export default function FolderWorkspaceLayout() {
   if (pathname.includes('/prompts')) activeTab = 'prompts';
 
   const handleMenuPress = () => {
-    const options = ['Rename', 'Archive', 'Delete', 'Cancel'];
-    const destructiveButtonIndex = 2;
-    const cancelButtonIndex = 3;
-
-    showActionSheetWithOptions(
-      {
-        options,
-        cancelButtonIndex,
-        destructiveButtonIndex,
-      },
-      (selectedIndex) => {
-        if (selectedIndex === 0) {
-          // rename
-        } else if (selectedIndex === 1) {
-          archiveFolder({ id: folderId });
-          router.replace('/(tabs)/folders');
-        } else if (selectedIndex === 2) {
-          deleteFolder({ id: folderId });
-          router.replace('/(tabs)/folders');
-        }
-      }
+    Alert.alert(
+      'Folder Options',
+      'Choose an action for this folder:',
+      [
+        { text: 'Cancel', style: 'cancel' },
+        { text: 'Rename', onPress: () => {} },
+        { 
+          text: 'Archive', 
+          onPress: () => {
+            archiveFolder({ id: folderId });
+            router.replace('/(tabs)/folders');
+          } 
+        },
+        { 
+          text: 'Delete', 
+          style: 'destructive',
+          onPress: () => {
+            deleteFolder({ id: folderId });
+            router.replace('/(tabs)/folders');
+          } 
+        },
+      ]
     );
   };
 

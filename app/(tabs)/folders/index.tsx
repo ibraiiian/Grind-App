@@ -3,7 +3,6 @@ import { View, Text, TextInput, TouchableOpacity, FlatList, Alert } from 'react-
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
-import { useActionSheet } from '@expo/react-native-action-sheet';
 
 import { useFolders } from '@/hooks/useFolders';
 import { FolderCard } from '@/components/FolderCard';
@@ -20,7 +19,6 @@ import BurstLines from '@/assets/svg/doodles/burst-lines.svg';
 
 export default function FolderGridScreen() {
   const router = useRouter();
-  const { showActionSheetWithOptions } = useActionSheet();
   const { folders, archivedFolders, archiveFolder, deleteFolder } = useFolders();
   
   const [searchQuery, setSearchQuery] = useState('');
@@ -35,35 +33,31 @@ export default function FolderGridScreen() {
   );
 
   const handleLongPress = (folderId: Id<'folders'>, folderName: string) => {
-    const options = ['Rename', 'Archive', 'Delete', 'Cancel'];
-    const destructiveButtonIndex = 2;
-    const cancelButtonIndex = 3;
-
-    showActionSheetWithOptions(
-      {
-        options,
-        cancelButtonIndex,
-        destructiveButtonIndex,
-      },
-      (selectedIndex) => {
-        if (selectedIndex === 0) {
-          // Rename - could open a modal or prompt. For now, navigate to new folder with edit mode?
-          // The prompt says "buka modal kecil dengan TextInput pre-filled".
-          // We can navigate to the modal and pass ID.
-          Alert.alert('Coming soon', 'Rename folder feature will be implemented in the next step.');
-        } else if (selectedIndex === 1) {
-          archiveFolder({ id: folderId });
-        } else if (selectedIndex === 2) {
-          Alert.alert(
-            'Hapus folder ini?',
-            'Semua task, catatan, dan prompt di dalamnya akan ikut terhapus.',
-            [
-              { text: 'Batal', style: 'cancel' },
-              { text: 'Hapus', style: 'destructive', onPress: () => deleteFolder({ id: folderId }) },
-            ]
-          );
-        }
-      }
+    Alert.alert(
+      'Folder Options',
+      'Choose an action for this folder:',
+      [
+        { text: 'Cancel', style: 'cancel' },
+        { text: 'Rename', onPress: () => Alert.alert('Coming soon', 'Rename folder feature will be implemented in the next step.') },
+        { 
+          text: 'Archive', 
+          onPress: () => archiveFolder({ id: folderId })
+        },
+        { 
+          text: 'Delete', 
+          style: 'destructive',
+          onPress: () => {
+            Alert.alert(
+              'Hapus folder ini?',
+              'Semua task, catatan, dan prompt di dalamnya akan ikut terhapus.',
+              [
+                { text: 'Batal', style: 'cancel' },
+                { text: 'Hapus', style: 'destructive', onPress: () => deleteFolder({ id: folderId }) },
+              ]
+            );
+          }
+        },
+      ]
     );
   };
 
