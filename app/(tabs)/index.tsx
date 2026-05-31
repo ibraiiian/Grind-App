@@ -155,8 +155,8 @@ export default function HomeScreen() {
             />
             {/* The scribble underline should always be under the placeholder */}
             {!captureText && (
-              <View className="absolute pointer-events-none z-0" style={{ left: 0, top: -25 }}>
-                <ScribbleUnderline width={220} height={110} />
+              <View className="absolute pointer-events-none z-0" style={{ left: 85, bottom: -12 }}>
+                <ScribbleUnderline width={135} height={18} preserveAspectRatio="none" />
               </View>
             )}
           </View>
