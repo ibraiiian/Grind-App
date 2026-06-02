@@ -20,7 +20,7 @@ import UserIcon from '@/assets/svg/icons/user.svg';
 
 interface TabIconProps {
   IconComponent: any;
-  color: string;
+  color: any;
   focused: boolean;
   isHome?: boolean;
 }

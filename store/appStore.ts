@@ -1,20 +1,26 @@
-/**
- * GRIND App — App Store (Zustand)
- * Source: PRD v2.0 Section 3.1 FR-1.3
- *
- * Global app state managed by Zustand.
- * Focus Mode: hides Inbox section on Home screen.
- */
-
 import { create } from 'zustand';
 
-interface AppState {
-  /** Focus Mode toggle — hides Inbox section on Home */
+interface AppStore {
+  // Focus mode
   isFocusMode: boolean;
   toggleFocusMode: () => void;
+
+  // Task filter (Global Task List)
+  activeTaskFilter: 'all' | 'urgent' | 'today' | 'thisWeek' | 'done';
+  setTaskFilter: (filter: AppStore['activeTaskFilter']) => void;
+
+  // Selected folder filter (Global Task List)
+  selectedFolderFilter: string | null;
+  setFolderFilter: (folderId: string | null) => void;
 }
 
-export const useAppStore = create<AppState>((set) => ({
+export const useAppStore = create<AppStore>((set) => ({
   isFocusMode: false,
-  toggleFocusMode: () => set((state) => ({ isFocusMode: !state.isFocusMode })),
+  toggleFocusMode: () => set((s) => ({ isFocusMode: !s.isFocusMode })),
+
+  activeTaskFilter: 'all',
+  setTaskFilter: (filter) => set({ activeTaskFilter: filter }),
+
+  selectedFolderFilter: null,
+  setFolderFilter: (folderId) => set({ selectedFolderFilter: folderId }),
 }));

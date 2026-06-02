@@ -23,7 +23,11 @@ export function TaskCard({ task, folderName, showFolderName = false, onToggleDon
   const isDone = task.status === 'DONE';
 
   return (
-    <View className="bg-gray-950 rounded-xl border border-gray-800 px-4 py-3.5 flex-row items-center mb-3">
+    <View 
+      className={`bg-gray-950 rounded-xl border border-gray-800 px-4 py-3.5 flex-row items-center mb-3 ${
+        task.isUrgent && !isDone ? 'border-l-[3px] border-l-red-500' : ''
+      }`}
+    >
       {/* Checkbox */}
       <TouchableOpacity
         className={`w-6 h-6 rounded-full border-2 mr-3 items-center justify-center ${

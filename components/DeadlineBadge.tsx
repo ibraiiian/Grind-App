@@ -40,14 +40,14 @@ export function DeadlineBadge({ deadline, status, isUrgent }: DeadlineBadgeProps
     <View
       className="rounded-lg px-2.5 py-1"
       style={{
-        backgroundColor: style.bg,
+        backgroundColor: label === 'terlambat' ? '#450a0a' : style.bg, // bg-red-950
         borderWidth: style.border ? 1 : 0,
         borderColor: style.border ?? 'transparent',
       }}
     >
       <Text
         className="text-xs font-medium"
-        style={{ color: style.text }}
+        style={{ color: label === 'terlambat' ? '#f87171' : style.text }} // text-red-400
       >
         {label}
       </Text>

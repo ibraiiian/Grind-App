@@ -99,13 +99,13 @@ export function getDeadlineLabel(deadline: number, status: string): string {
   const deadlineDate = new Date(deadline);
   const minutesLeft = differenceInMinutes(deadlineDate, now);
 
-  if (minutesLeft < 0) return 'lewat!';
+  if (minutesLeft < 0) return 'terlambat';
   if (minutesLeft < 60) return `${minutesLeft} menit lagi`;
 
   const hoursLeft = differenceInHours(deadlineDate, now);
   if (hoursLeft < 24) return `${hoursLeft} jam lagi`;
 
-  const daysLeft = Math.floor(hoursLeft / 24);
+  const daysLeft = Math.ceil(hoursLeft / 24);
   if (daysLeft === 1) return '1 hari lagi';
   return `${daysLeft} hari lagi`;
 }
@@ -139,4 +139,41 @@ export function groupTasksByUrgency<T extends TaskForGrouping>(tasks: T[]) {
     }),
     done: tasks.filter((t) => t.status === 'DONE'),
   };
+}
+
+export function buildTaskSections<T extends TaskForGrouping>(tasks: T[], filter: string) {
+  let filtered = tasks;
+
+  if (filter === 'urgent') {
+    filtered = tasks.filter(t =>
+      getDeadlineStatus(t.deadline, t.status === 'DONE', t.isUrgent) === 'urgent' && t.status !== 'DONE'
+    );
+  } else if (filter === 'today') {
+    filtered = tasks.filter(t => {
+      const d = new Date(t.deadline);
+      const today = new Date();
+      return d.toDateString() === today.toDateString() && t.status !== 'DONE';
+    });
+  } else if (filter === 'thisWeek') {
+    filtered = tasks.filter(t => {
+      const h = differenceInHours(new Date(t.deadline), new Date());
+      return h >= 0 && h <= 168 && t.status !== 'DONE';
+    });
+  } else if (filter === 'done') {
+    filtered = tasks.filter(t => t.status === 'DONE');
+    return [{ title: 'done', icon: 'checkmark', data: filtered }];
+  }
+
+  // Group by urgency for 'all' and other dynamic filters (though if urgent is selected, thisWeek will be empty)
+  const grouped = groupTasksByUrgency(filtered);
+  const sections = [];
+  
+  if (grouped.urgent.length > 0)
+    sections.push({ title: 'urgent', icon: 'urgent-dot', data: grouped.urgent });
+  if (grouped.thisWeek.length > 0)
+    sections.push({ title: 'this week', icon: 'timer-outline', data: grouped.thisWeek });
+  if (grouped.done.length > 0)
+    sections.push({ title: 'done', icon: 'checkmark', data: grouped.done });
+    
+  return sections;
 }
