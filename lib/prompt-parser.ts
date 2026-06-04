@@ -50,3 +50,25 @@ export function fillTemplate(
 ): string {
   return template.replace(/\{\{(\w+)\}\}/g, (_, key) => values[key] ?? '');
 }
+
+export type TemplateSegment =
+  | { type: 'text'; content: string }
+  | { type: 'variable'; name: string };
+
+export function parseTemplateSegments(template: string): TemplateSegment[] {
+  const segments: TemplateSegment[] = [];
+  let lastIndex = 0;
+  const regex = /\{\{(\w+)\}\}/g;
+  let match;
+  while ((match = regex.exec(template)) !== null) {
+    if (match.index > lastIndex) {
+      segments.push({ type: 'text', content: template.slice(lastIndex, match.index) });
+    }
+    segments.push({ type: 'variable', name: match[1] });
+    lastIndex = match.index + match[0].length;
+  }
+  if (lastIndex < template.length) {
+    segments.push({ type: 'text', content: template.slice(lastIndex) });
+  }
+  return segments;
+}

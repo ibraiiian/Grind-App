@@ -97,3 +97,13 @@ export const deletePrompt = mutation({
     await ctx.db.delete(args.id);
   },
 });
+
+/**
+ * Get a single prompt by its ID.
+ */
+export const getPromptById = query({
+  args: { id: v.id('aiPrompts') },
+  handler: async (ctx, args) => {
+    return await ctx.db.get(args.id);
+  },
+});
