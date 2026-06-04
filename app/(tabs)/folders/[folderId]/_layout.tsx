@@ -3,7 +3,8 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Stack, useRouter, usePathname, Slot, useLocalSearchParams } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useFolderById, useFolders } from '@/hooks/useFolders';
-import Sparkle4Point from '@/assets/svg/doodles/sparkle-4point.svg';
+import SparklesPair from '@/assets/svg/doodles/sparkles-pair.svg';
+import BurstLines from '@/assets/svg/doodles/burst-lines.svg';
 import { Id } from '@/convex/_generated/dataModel';
 
 export default function FolderWorkspaceLayout() {
@@ -66,9 +67,14 @@ export default function FolderWorkspaceLayout() {
           <Ionicons name="arrow-back" size={24} color="white" />
         </TouchableOpacity>
 
-        <View className="flex-row items-center">
-          <Text className="font-bold text-xl text-white mr-1">{folder.name}</Text>
-          <Sparkle4Point width={18} height={18} color="white" />
+        <View className="flex-row items-center relative">
+          <View className="absolute -top-3 -left-5 opacity-80" style={{ transform: [{ rotate: '-15deg' }] }}>
+            <BurstLines width={22} height={22} color="#fff" />
+          </View>
+          <Text className="font-black text-[22px] text-white mx-2">{folder.name}</Text>
+          <View className="absolute -top-1 -right-7">
+            <SparklesPair width={24} height={24} color="white" />
+          </View>
         </View>
 
         <TouchableOpacity onPress={handleMenuPress} className="p-1 -mr-1">
@@ -78,21 +84,23 @@ export default function FolderWorkspaceLayout() {
 
       {/* TOP TAB BAR */}
       <View className="flex-row border-b border-gray-800 px-5 mb-4">
-        {(['tasks', 'notes', 'prompts'] as const).map((tab) => {
+        {(['tasks', 'notes', 'prompts'] as const).map((tab, index) => {
           const isActive = activeTab === tab;
           return (
-            <TouchableOpacity
-              key={tab}
-              className="flex-1 items-center pb-3 pt-2 relative"
-              onPress={() => navTo(tab)}
-            >
-              <Text className={`font-bold capitalize ${isActive ? 'text-white' : 'text-gray-500'}`}>
-                {tab}
-              </Text>
-              {isActive && (
-                <View className="absolute bottom-0 left-0 right-0 h-[2px] bg-white" />
-              )}
-            </TouchableOpacity>
+            <View key={tab} className="flex-1 flex-row items-center">
+              <TouchableOpacity
+                className="flex-1 items-center pb-3 pt-2 relative"
+                onPress={() => navTo(tab)}
+              >
+                <Text className={`font-bold capitalize text-[15px] ${isActive ? 'text-white' : 'text-gray-500'}`}>
+                  {tab}
+                </Text>
+                {isActive && (
+                  <View className="absolute bottom-0 left-[20%] right-[20%] h-[3px] bg-white rounded-t-sm" />
+                )}
+              </TouchableOpacity>
+              {index < 2 && <View className="w-[1px] h-5 bg-gray-600" />}
+            </View>
           );
         })}
       </View>

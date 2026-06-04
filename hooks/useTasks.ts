@@ -54,7 +54,8 @@ export function useAllTasks() {
 
   const tasks = useQuery(api.tasks.listAllTasks, userId ? { userId } : 'skip');
   const updateStatus = useMutation(api.tasks.updateTaskStatus);
+  const deleteTask = useMutation(api.tasks.deleteTask);
 
-  return { tasks, updateStatus };
+  return { tasks, updateStatus, deleteTask };
 }
 

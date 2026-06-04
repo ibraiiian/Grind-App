@@ -3,7 +3,8 @@ import { View, Text, TouchableOpacity, SectionList, ScrollView, StyleSheet } fro
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
-import { BottomSheetModal, BottomSheetBackdrop } from '@gorhom/bottom-sheet';
+import { BottomSheetModal, BottomSheetBackdrop, BottomSheetScrollView } from '@gorhom/bottom-sheet';
+import { TouchableOpacity as GHTouchableOpacity } from 'react-native-gesture-handler';
 import Toast from 'react-native-toast-message';
 
 import { useAllTasks } from '@/hooks/useTasks';
@@ -17,11 +18,17 @@ import { colors } from '@/constants/colors';
 
 // SVGs
 import Sparkle4Point from '@/assets/svg/doodles/sparkle-4point.svg';
+import SparklesPair from '@/assets/svg/doodles/sparkles-pair.svg';
+import BurstLines from '@/assets/svg/doodles/burst-lines.svg';
+import SmileyDoodle from '@/assets/svg/doodles/smiley.svg';
+import SquiggleArrow from '@/assets/svg/doodles/squiggle-arrow.svg';
+import DotGrid from '@/assets/svg/ui-elements/dot-grid.svg';
+import LockedInSticker from '@/assets/svg/stickers/locked-in.svg';
 import UrgencyDotGray from '@/assets/svg/ui-elements/urgency-dot-gray.svg';
 
 export default function GlobalTasksScreen() {
   const router = useRouter();
-  const { tasks, updateStatus } = useAllTasks();
+  const { tasks, updateStatus, deleteTask } = useAllTasks();
   const { folders } = useFolders();
   
   const { activeTaskFilter, setTaskFilter, selectedFolderFilter, setFolderFilter } = useAppStore();
@@ -64,6 +71,10 @@ export default function GlobalTasksScreen() {
     updateStatus({ id: id as any, status: newStatus });
   };
 
+  const handleDeleteTask = (id: string) => {
+    deleteTask({ id: id as any });
+  };
+
   const renderBackdrop = useCallback(
     (props: any) => (
       <BottomSheetBackdrop
@@ -83,20 +94,23 @@ export default function GlobalTasksScreen() {
           ═══════════════════════════════════════════════ */}
       <View className="px-5 pt-4 pb-4 flex-row items-center justify-between">
         <View className="relative">
-          <View className="absolute -top-3 -right-6 opacity-80">
-            <Sparkle4Point width={20} height={20} color="#fff" />
+          <View className="absolute -top-1 -left-5 opacity-80" style={{ transform: [{ rotate: '-15deg' }] }}>
+            <BurstLines width={22} height={22} color="#fff" />
           </View>
           <Text className="font-black text-4xl text-white lowercase">all tasks.</Text>
+          <View className="absolute top-0 -right-8">
+            <SparklesPair width={24} height={24} color="#fff" />
+          </View>
           <Text className="text-sm text-gray-500 mt-1">
             {totalCount} tasks · sorted by deadline
           </Text>
         </View>
 
         <TouchableOpacity 
-          className="w-10 h-10 border border-gray-700 rounded-xl items-center justify-center bg-gray-900"
+          className="w-10 h-10 items-center justify-center bg-transparent"
           onPress={handleSortPress}
         >
-          <Ionicons name="options-outline" size={22} color="white" />
+          <Ionicons name="options-outline" size={26} color="white" />
         </TouchableOpacity>
       </View>
 
@@ -116,10 +130,10 @@ export default function GlobalTasksScreen() {
                 key={f}
                 onPress={() => setTaskFilter(formatFilterValue(f) as any)}
                 className={`rounded-full px-4 py-2 ${
-                  isActive ? 'bg-white' : 'border border-gray-700 bg-black'
+                  isActive ? 'bg-white' : 'border border-gray-500 bg-transparent'
                 }`}
               >
-                <Text className={`text-sm font-bold ${isActive ? 'text-black' : 'text-gray-400'}`}>
+                <Text className={`text-[15px] ${isActive ? 'text-black font-bold' : 'text-gray-400'}`}>
                   {f}
                 </Text>
               </TouchableOpacity>
@@ -133,15 +147,15 @@ export default function GlobalTasksScreen() {
           ═══════════════════════════════════════════════ */}
       <View className="px-5 mb-5">
         <TouchableOpacity 
-          className="bg-gray-900 border border-gray-700 rounded-xl h-12 px-4 flex-row items-center justify-between"
+          className="border border-gray-600 rounded-xl h-11 px-4 flex-row items-center justify-between bg-transparent"
           onPress={() => folderSheetRef.current?.present()}
         >
-          <Text className="text-white text-base font-medium">
+          <Text className="text-white text-[15px] font-bold">
             {selectedFolderFilter 
               ? folders?.find(f => f._id === selectedFolderFilter)?.name || 'all folders'
               : 'all folders'}
           </Text>
-          <Ionicons name="chevron-down" size={20} color={colors.gray500} />
+          <Ionicons name="caret-down" size={16} color="white" />
         </TouchableOpacity>
       </View>
 
@@ -166,24 +180,34 @@ export default function GlobalTasksScreen() {
             renderSectionHeader={({ section }) => (
               <View className="flex-row items-center mb-3 mt-4">
                 {section.title === 'urgent' && (
-                  <>
-                    <View className="w-3 h-3 rounded-full bg-red-500 mr-2" />
-                    <Text className="text-sm font-bold text-red-500">urgent</Text>
-                  </>
+                  <View className="flex-row items-center justify-between w-full pr-2">
+                    <View className="flex-row items-center">
+                      <View className="w-3 h-3 rounded-full bg-red-500 mr-2" />
+                      <Text className="text-[15px] font-bold text-red-500">urgent</Text>
+                    </View>
+                    <View className="flex-row items-center relative">
+                      <View className="absolute right-8 top-1 opacity-80" style={{ transform: [{ rotate: '45deg' }] }}>
+                        <BurstLines width={18} height={18} color="#fff" />
+                      </View>
+                      <SmileyDoodle width={24} height={24} color="#fff" />
+                    </View>
+                  </View>
                 )}
                 {section.title === 'this week' && (
-                  <>
-                    <Ionicons name="timer-outline" size={16} color={colors.gray400} className="mr-1.5" />
-                    <Text className="text-sm text-gray-400 ml-1.5">this week</Text>
-                    <View className="ml-2 mt-0.5 opacity-60">
-                      <Sparkle4Point width={14} height={14} color={colors.gray400} />
+                  <View className="flex-row items-center justify-between w-full pr-2">
+                    <View className="flex-row items-center">
+                      <Ionicons name="hourglass-outline" size={16} color={colors.gray500} className="mr-1.5" />
+                      <Text className="text-[15px] text-gray-500 ml-1">this week</Text>
                     </View>
-                  </>
+                    <View className="opacity-80">
+                      <Sparkle4Point width={16} height={16} color="#fff" />
+                    </View>
+                  </View>
                 )}
                 {section.title === 'done' && (
                   <>
-                    <Ionicons name="checkmark" size={16} color={colors.gray600} className="mr-1.5" />
-                    <Text className="text-sm text-gray-600 ml-1.5">done</Text>
+                    <Ionicons name="checkmark" size={16} color={colors.gray500} className="mr-1.5" />
+                    <Text className="text-sm text-gray-500 ml-1.5">done</Text>
                   </>
                 )}
               </View>
@@ -197,6 +221,7 @@ export default function GlobalTasksScreen() {
                   folderName={folderName}
                   showFolderName={true}
                   onToggleDone={() => handleToggleTask(task._id, task.status)}
+                  onDelete={() => handleDeleteTask(task._id)}
                 />
               );
             }}
@@ -207,17 +232,32 @@ export default function GlobalTasksScreen() {
       {/* ═══════════════════════════════════════════════
           E. FAB BUTTON
           ═══════════════════════════════════════════════ */}
-      <View className="absolute bottom-6 right-6 items-center">
-        <View className="mb-2 border border-gray-700 bg-gray-900 rounded-full px-2 py-0.5">
-          <Text className="text-white font-bold text-[9px] uppercase tracking-wider">locked in</Text>
+      <View className="absolute bottom-6 left-0 right-0 flex-row items-end justify-between px-6 pointer-events-none">
+        {/* Left doodles */}
+        <View className="flex-row items-end pb-2">
+          <SquiggleArrow width={48} height={48} color="#fff" />
         </View>
-        <TouchableOpacity
-          className="w-14 h-14 bg-white rounded-full items-center justify-center shadow-lg"
-          onPress={() => router.push('/modals/new-task')}
-          activeOpacity={0.8}
-        >
-          <Ionicons name="add" size={28} color="black" />
-        </TouchableOpacity>
+        
+        {/* Right FAB Area */}
+        <View className="items-center relative pointer-events-auto">
+          <View className="absolute -left-20 bottom-2 pointer-events-none">
+            <DotGrid width={36} height={36} color="#444" />
+          </View>
+          <View className="absolute -left-12 -top-2 z-10" style={{ transform: [{ rotate: '-10deg' }] }}>
+            <LockedInSticker width={60} height={24} />
+          </View>
+          <View className="absolute -right-3 -bottom-1 z-0" style={{ transform: [{ rotate: '120deg' }] }}>
+            <BurstLines width={20} height={20} color="#fff" />
+          </View>
+
+          <TouchableOpacity
+            className="w-[60px] h-[60px] bg-white rounded-full items-center justify-center shadow-lg relative z-20"
+            onPress={() => router.push('/modals/new-task')}
+            activeOpacity={0.8}
+          >
+            <Ionicons name="add" size={32} color="black" />
+          </TouchableOpacity>
+        </View>
       </View>
 
       {/* ═══════════════════════════════════════════════
@@ -228,13 +268,13 @@ export default function GlobalTasksScreen() {
         snapPoints={['50%']}
         index={0}
         backgroundStyle={{ backgroundColor: colors.gray900 }}
-        handleIndicatorStyle={{ backgroundColor: colors.gray600 }}
+        handleIndicatorStyle={{ backgroundColor: colors.gray500 }}
         backdropComponent={renderBackdrop}
       >
         <View className="flex-1 px-5 pt-4">
           <Text className="text-white text-xl font-bold mb-4">Select Folder</Text>
-          <ScrollView showsVerticalScrollIndicator={false}>
-            <TouchableOpacity 
+          <BottomSheetScrollView showsVerticalScrollIndicator={false}>
+            <GHTouchableOpacity 
               className="flex-row items-center py-4 border-b border-gray-800"
               onPress={() => {
                 setFolderFilter(null);
@@ -245,10 +285,10 @@ export default function GlobalTasksScreen() {
               <Text className={`text-base ${selectedFolderFilter === null ? 'text-white font-bold' : 'text-gray-400'}`}>
                 all folders
               </Text>
-            </TouchableOpacity>
+            </GHTouchableOpacity>
 
             {folders?.map(f => (
-              <TouchableOpacity 
+              <GHTouchableOpacity 
                 key={f._id}
                 className="flex-row items-center py-4 border-b border-gray-800"
                 onPress={() => {
@@ -258,14 +298,14 @@ export default function GlobalTasksScreen() {
               >
                 <View className="w-8 items-center justify-center">
                    {/* We don't have the color dot component specifically, so fallback to urgency-dot or simple view */}
-                   <View className="w-3 h-3 rounded-full" style={{ backgroundColor: f.color || '#888' }} />
+                   <View className="w-3 h-3 rounded-full" style={{ backgroundColor: (f as any).colorHex || '#888' }} />
                 </View>
                 <Text className={`text-base ${selectedFolderFilter === f._id ? 'text-white font-bold' : 'text-gray-400'}`}>
                   {f.name}
                 </Text>
-              </TouchableOpacity>
+              </GHTouchableOpacity>
             ))}
-          </ScrollView>
+          </BottomSheetScrollView>
         </View>
       </BottomSheetModal>
     </SafeAreaView>

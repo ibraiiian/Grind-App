@@ -11,7 +11,8 @@ import {
 } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
-import { BottomSheetModal, BottomSheetBackdrop } from '@gorhom/bottom-sheet';
+import { BottomSheetModal, BottomSheetBackdrop, BottomSheetScrollView } from '@gorhom/bottom-sheet';
+import { TouchableOpacity as GHTouchableOpacity } from 'react-native-gesture-handler';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import Toast from 'react-native-toast-message';
 import { z } from 'zod';
@@ -29,8 +30,8 @@ import DotGrid from '@/assets/svg/ui-elements/dot-grid.svg';
 const taskSchema = z.object({
   title: z.string().min(1, 'Judul tidak boleh kosong').max(100),
   description: z.string().max(500).optional(),
-  deadline: z.number({ required_error: 'Deadline wajib diisi' }),
-  folderId: z.string({ required_error: 'Folder wajib dipilih' }),
+  deadline: z.number({ invalid_type_error: 'Deadline wajib diisi' }),
+  folderId: z.string({ invalid_type_error: 'Folder wajib dipilih' }).min(1, 'Folder wajib dipilih'),
   tags: z.array(z.string()).max(5),
   isUrgent: z.boolean(),
 });
@@ -40,7 +41,7 @@ export default function NewTaskModal() {
   const params = useLocalSearchParams<{ folderId?: Id<'folders'> }>();
   const { user } = useUser();
   const createTask = useMutation(api.tasks.createTask);
-  const folders = useQuery(api.folders.list, { userId: user?.id ?? '' });
+  const folders = useQuery(api.folders.listFolders, { userId: user?.id ?? '' });
   
   const folderSheetRef = useRef<BottomSheetModal>(null);
 
@@ -89,7 +90,7 @@ export default function NewTaskModal() {
     
     if (!parsed.success) {
       const fieldErrors: Record<string, string> = {};
-      parsed.error.errors.forEach(err => {
+      parsed.error.issues.forEach((err: any) => {
         if (err.path[0]) {
           fieldErrors[err.path[0].toString()] = err.message;
         }
@@ -161,7 +162,7 @@ export default function NewTaskModal() {
               onChangeText={(txt) => { setTitle(txt); setErrors({...errors, title: ''}); }}
               autoFocus={true}
             />
-            {errors.title && <Text className="text-red-500 text-xs mt-1 ml-2">{errors.title}</Text>}
+            {errors.title ? <Text className="text-red-500 text-xs mt-1 ml-2">{errors.title}</Text> : null}
           </View>
 
           {/* FIELD 2: DESKRIPSI */}
@@ -182,27 +183,58 @@ export default function NewTaskModal() {
 
           {/* FIELD 3: DEADLINE */}
           <View className="mb-4">
-            <TouchableOpacity
-              className="bg-gray-900 border border-gray-700 rounded-xl h-14 px-4 flex-row items-center justify-between"
-              onPress={() => setShowDatePicker(true)}
-            >
-              <View className="flex-row items-center">
-                <Ionicons name="calendar-outline" size={20} color={colors.gray500} className="mr-3" />
-                <Text className="text-white text-base font-medium">{formatDate(deadline)}</Text>
+            {Platform.OS === 'web' ? (
+              <View className="bg-gray-900 border border-gray-700 rounded-xl h-14 px-4 flex-row items-center justify-between">
+                <View className="flex-row items-center flex-1">
+                  <Ionicons name="calendar-outline" size={20} color={colors.gray500} className="mr-3" />
+                  {/* @ts-ignore */}
+                  <input
+                    type="datetime-local"
+                    style={{
+                      backgroundColor: 'transparent',
+                      color: 'white',
+                      border: 'none',
+                      outline: 'none',
+                      fontSize: '16px',
+                      fontFamily: 'inherit',
+                      width: '100%',
+                      cursor: 'pointer'
+                    }}
+                    min={new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().slice(0, 16)}
+                    value={new Date(deadline.getTime() - deadline.getTimezoneOffset() * 60000).toISOString().slice(0, 16)}
+                    onChange={(e: any) => {
+                      if (e.target.value) {
+                        setDeadline(new Date(e.target.value));
+                      }
+                    }}
+                  />
+                </View>
               </View>
-              <Ionicons name="chevron-forward" size={20} color={colors.gray500} />
-            </TouchableOpacity>
-            {showDatePicker && (
-              <DateTimePicker
-                value={deadline}
-                mode="datetime"
-                minimumDate={new Date()}
-                display="default"
-                onChange={(event, selectedDate) => {
-                  setShowDatePicker(false);
-                  if (selectedDate) setDeadline(selectedDate);
-                }}
-              />
+            ) : (
+              <>
+                <TouchableOpacity
+                  className="bg-gray-900 border border-gray-700 rounded-xl h-14 px-4 flex-row items-center justify-between"
+                  onPress={() => setShowDatePicker(true)}
+                >
+                  <View className="flex-row items-center">
+                    <Ionicons name="calendar-outline" size={20} color={colors.gray500} className="mr-3" />
+                    <Text className="text-white text-base font-medium">{formatDate(deadline)}</Text>
+                  </View>
+                  <Ionicons name="chevron-forward" size={20} color={colors.gray500} />
+                </TouchableOpacity>
+                {showDatePicker && (
+                  <DateTimePicker
+                    value={deadline}
+                    mode="datetime"
+                    minimumDate={new Date()}
+                    display="default"
+                    onChange={(event, selectedDate) => {
+                      setShowDatePicker(false);
+                      if (selectedDate) setDeadline(selectedDate);
+                    }}
+                  />
+                )}
+              </>
             )}
           </View>
 
@@ -225,7 +257,7 @@ export default function NewTaskModal() {
               </View>
               <Ionicons name="chevron-forward" size={20} color={colors.gray500} />
             </TouchableOpacity>
-            {errors.folderId && <Text className="text-red-500 text-xs mt-1 ml-2">{errors.folderId}</Text>}
+            {errors.folderId ? <Text className="text-red-500 text-xs mt-1 ml-2">{errors.folderId}</Text> : null}
           </View>
 
           {/* FIELD 5: TAGS */}
@@ -238,7 +270,7 @@ export default function NewTaskModal() {
                 <View key={t} className="bg-gray-800 border border-gray-700 rounded-full px-3 py-1.5 flex-row items-center">
                   <Text className="text-white text-sm font-medium mr-1.5">{t}</Text>
                   <TouchableOpacity onPress={() => removeTag(t)}>
-                    <Ionicons name="close" size={14} color={colors.gray400} />
+                    <Ionicons name="close" size={14} color={colors.gray500} />
                   </TouchableOpacity>
                 </View>
               ))}
@@ -310,14 +342,14 @@ export default function NewTaskModal() {
         snapPoints={['50%']}
         index={0}
         backgroundStyle={{ backgroundColor: colors.gray900 }}
-        handleIndicatorStyle={{ backgroundColor: colors.gray600 }}
+        handleIndicatorStyle={{ backgroundColor: colors.gray500 }}
         backdropComponent={(props) => <BottomSheetBackdrop {...props} disappearsOnIndex={-1} appearsOnIndex={0} opacity={0.7} />}
       >
         <View className="flex-1 px-5 pt-4">
           <Text className="text-white text-xl font-bold mb-4">Select Folder</Text>
-          <ScrollView showsVerticalScrollIndicator={false}>
-            {folders?.map(f => (
-              <TouchableOpacity 
+          <BottomSheetScrollView showsVerticalScrollIndicator={false}>
+            {folders?.map((f: any) => (
+              <GHTouchableOpacity 
                 key={f._id}
                 className="flex-row items-center py-4 border-b border-gray-800"
                 onPress={() => {
@@ -327,12 +359,12 @@ export default function NewTaskModal() {
                 }}
               >
                 <View className="w-8 items-center justify-center">
-                   <View className="w-3 h-3 rounded-full" style={{ backgroundColor: f.color || '#888' }} />
+                   <View className="w-3 h-3 rounded-full" style={{ backgroundColor: f.colorHex || '#888' }} />
                 </View>
                 <Text className="text-base text-white font-medium">{f.name}</Text>
-              </TouchableOpacity>
+              </GHTouchableOpacity>
             ))}
-          </ScrollView>
+          </BottomSheetScrollView>
         </View>
       </BottomSheetModal>
     </KeyboardAvoidingView>

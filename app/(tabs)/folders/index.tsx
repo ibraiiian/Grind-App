@@ -5,6 +5,7 @@ import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 
 import { useFolders } from '@/hooks/useFolders';
+import { useTaskCounts } from '@/hooks/useTasks';
 import { FolderCard } from '@/components/FolderCard';
 import { LoadingSkeleton } from '@/components/LoadingSkeleton';
 import { EmptyState } from '@/components/EmptyState';
@@ -16,6 +17,22 @@ import SmileyDoodle from '@/assets/svg/doodles/smiley.svg';
 import SquiggleArrow from '@/assets/svg/doodles/squiggle-arrow.svg';
 import DotGrid from '@/assets/svg/ui-elements/dot-grid.svg';
 import BurstLines from '@/assets/svg/doodles/burst-lines.svg';
+
+function FolderGridItem({ item, onLongPress }: { item: any; onLongPress: any }) {
+  const router = useRouter();
+  const { counts } = useTaskCounts(item._id);
+  const totalTasks = counts ? counts.todo + counts.inProgress + counts.done : 0;
+  
+  return (
+    <FolderCard
+      folder={item}
+      taskCount={totalTasks}
+      noteCount={0}
+      onPress={() => router.push(`/folders/${item._id}`)}
+      onLongPress={() => onLongPress(item._id, item.name)}
+    />
+  );
+}
 
 export default function FolderGridScreen() {
   const router = useRouter();
@@ -112,12 +129,9 @@ export default function FolderGridScreen() {
             contentContainerStyle={{ gap: 12, paddingBottom: 120 }}
             showsVerticalScrollIndicator={false}
             renderItem={({ item }) => (
-              <FolderCard
-                folder={item}
-                taskCount={0} // We will need to compute this or pass it. For now, placeholder 0, or we could fetch it.
-                noteCount={0} // same
-                onPress={() => router.push(`/folders/${item._id}`)}
-                onLongPress={() => handleLongPress(item._id, item.name)}
+              <FolderGridItem 
+                item={item} 
+                onLongPress={handleLongPress} 
               />
             )}
             ListFooterComponent={() => (

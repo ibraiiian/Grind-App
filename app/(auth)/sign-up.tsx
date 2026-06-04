@@ -98,9 +98,9 @@ export default function SignUpScreen() {
     } catch (err: any) {
       console.error("Sign up error:", err);
       
-      let errorMsg = "Something went wrong.";
+      let errorMsg: string | null = "Something went wrong.";
       if (err?.errors && Array.isArray(err.errors) && err.errors.length > 0) {
-        errorMsg = err.errors[0].longMessage || err.errors[0].message || errorMsg;
+        errorMsg = err.errors[0].message;
       } else if (err?.message) {
         errorMsg = err.message;
       }
@@ -108,7 +108,7 @@ export default function SignUpScreen() {
       Toast.show({
         type: "error",
         text1: "Error",
-        text2: errorMsg,
+        text2: errorMsg || "Unknown error occurred",
       });
     } finally {
       setIsLoading(false);

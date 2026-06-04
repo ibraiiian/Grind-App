@@ -8,9 +8,9 @@ import { TaskCard } from '@/components/TaskCard';
 import { LoadingSkeleton } from '@/components/LoadingSkeleton';
 import { EmptyState } from '@/components/EmptyState';
 
-// Doodles
 import SmileyDoodle from '@/assets/svg/doodles/smiley.svg';
 import Sparkle4Point from '@/assets/svg/doodles/sparkle-4point.svg';
+import BurstLines from '@/assets/svg/doodles/burst-lines.svg';
 import SquiggleArrow from '@/assets/svg/doodles/squiggle-arrow.svg';
 import LockedInSticker from '@/assets/svg/stickers/locked-in.svg';
 import DotGrid from '@/assets/svg/ui-elements/dot-grid.svg';
@@ -21,7 +21,7 @@ export default function FolderTasksScreen() {
   const { folderId } = useLocalSearchParams<{ folderId: Id<'folders'> }>();
   const router = useRouter();
 
-  const { tasks, updateStatus } = useTasks(folderId);
+  const { tasks, updateStatus, deleteTask } = useTasks(folderId);
   const { counts } = useTaskCounts(folderId);
   
   const [filter, setFilter] = useState<FilterStatus>('ALL');
@@ -30,38 +30,40 @@ export default function FolderTasksScreen() {
 
   return (
     <View className="flex-1 px-5 pt-2 relative">
-      {/* Decorative Doodles */}
-      <View className="absolute top-1 left-2">
-        <SmileyDoodle width={32} height={32} color="#fff" />
-      </View>
-      <View className="absolute top-12 right-0">
-        <Sparkle4Point width={24} height={24} color="#fff" />
-      </View>
-
       {/* STATUS COUNTER PILLS */}
-      <View className="flex-row items-center justify-center gap-x-3 mb-6 relative z-10">
+      <View className="flex-row items-center justify-center gap-x-2 mb-6 relative z-10 mt-2">
+        {/* Decorative Doodles */}
+        <View className="absolute -left-3 top-1">
+          <SmileyDoodle width={24} height={24} color="#fff" />
+        </View>
+        <View className="absolute -right-3 -top-2" style={{ transform: [{ rotate: '45deg' }] }}>
+          <BurstLines width={22} height={22} color="#fff" />
+        </View>
+        <View className="absolute -right-4 top-4">
+          <Sparkle4Point width={14} height={14} color="#fff" />
+        </View>
         <TouchableOpacity 
-          className={`flex-row items-center border rounded-full px-4 py-2 ${filter === 'TODO' ? 'border-white bg-white/10' : 'border-gray-700'}`}
+          className={`flex-row items-center border rounded-full px-4 py-[6px] ${filter === 'TODO' ? 'border-white' : 'border-white/40'}`}
           onPress={() => setFilter(filter === 'TODO' ? 'ALL' : 'TODO')}
         >
-          <Text className="font-bold text-white mr-1">{counts?.todo || 0}</Text>
-          <Text className="text-gray-500 text-sm">todo</Text>
+          <Text className="font-bold text-white mr-1.5 text-[15px]">{counts?.todo || 0}</Text>
+          <Text className="text-gray-400 text-xs">todo</Text>
         </TouchableOpacity>
 
         <TouchableOpacity 
-          className={`flex-row items-center border rounded-full px-4 py-2 ${filter === 'IN_PROGRESS' ? 'border-white bg-white/10' : 'border-gray-700'}`}
+          className={`flex-row items-center border rounded-full px-4 py-[6px] ${filter === 'IN_PROGRESS' ? 'border-white' : 'border-white/40'}`}
           onPress={() => setFilter(filter === 'IN_PROGRESS' ? 'ALL' : 'IN_PROGRESS')}
         >
-          <Text className="font-bold text-white mr-1">{counts?.inProgress || 0}</Text>
-          <Text className="text-gray-500 text-sm">in progress</Text>
+          <Text className="font-bold text-white mr-1.5 text-[15px]">{counts?.inProgress || 0}</Text>
+          <Text className="text-gray-400 text-xs">in progress</Text>
         </TouchableOpacity>
 
         <TouchableOpacity 
-          className={`flex-row items-center border rounded-full px-4 py-2 ${filter === 'DONE' ? 'border-white bg-white/10' : 'border-gray-700'}`}
+          className={`flex-row items-center border rounded-full px-4 py-[6px] ${filter === 'DONE' ? 'border-white' : 'border-white/40'}`}
           onPress={() => setFilter(filter === 'DONE' ? 'ALL' : 'DONE')}
         >
-          <Text className="font-bold text-white mr-1">{counts?.done || 0}</Text>
-          <Text className="text-gray-500 text-sm">done</Text>
+          <Text className="font-bold text-white mr-1.5 text-[15px]">{counts?.done || 0}</Text>
+          <Text className="text-gray-400 text-xs">done</Text>
         </TouchableOpacity>
       </View>
 
@@ -76,14 +78,29 @@ export default function FolderTasksScreen() {
           keyExtractor={(item) => item._id}
           showsVerticalScrollIndicator={false}
           contentContainerStyle={{ paddingBottom: 100 }}
-          renderItem={({ item }) => (
-            <TaskCard
-              task={item}
-              onToggleDone={() => {
-                const newStatus = item.status === 'DONE' ? 'TODO' : 'DONE';
-                updateStatus({ id: item._id, status: newStatus });
-              }}
-            />
+          renderItem={({ item, index }) => (
+            <View className="relative">
+              {/* Doodles for specific indices to match design */}
+              {index === 0 && filter === 'ALL' && (
+                <View className="absolute -left-4 top-8 z-0" style={{ transform: [{ rotate: '-25deg' }] }}>
+                  <BurstLines width={18} height={18} color="#fff" />
+                </View>
+              )}
+              {index === 2 && filter === 'ALL' && (
+                <View className="absolute -right-4 top-10 z-0">
+                  <Sparkle4Point width={18} height={18} color="#fff" />
+                </View>
+              )}
+
+              <TaskCard
+                task={item}
+                onToggleDone={() => {
+                  const newStatus = item.status === 'DONE' ? 'TODO' : 'DONE';
+                  updateStatus({ id: item._id, status: newStatus });
+                }}
+                onDelete={() => deleteTask({ id: item._id })}
+              />
+            </View>
           )}
           ListFooterComponent={() => (
             <View className="mt-8 relative mb-8">
@@ -99,14 +116,14 @@ export default function FolderTasksScreen() {
               </View>
               
               <TouchableOpacity
-                className="h-14 border border-gray-700 rounded-xl items-center justify-center flex-row relative"
+                className="h-[52px] border border-gray-500 rounded-[16px] items-center justify-center flex-row relative mt-2 bg-transparent"
                 style={{ borderStyle: 'dashed' }}
                 onPress={() => {
                   // Navigate to modal
                   router.push(`/modals/new-task?folderId=${folderId}`);
                 }}
               >
-                <Text className="text-white text-base font-medium">+ add task</Text>
+                <Text className="text-white text-[15px] font-bold">+ add task</Text>
               </TouchableOpacity>
             </View>
           )}
