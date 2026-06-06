@@ -11,6 +11,7 @@ import { Id } from '@/convex/_generated/dataModel';
 import { useNote } from '@/hooks/useNotes';
 import { useMutation } from 'convex/react';
 import { api } from '@/convex/_generated/api';
+import { NoteToolbar, TOOLS } from '@/components/NoteToolbar';
 
 // ────────────────────────────────────
 // Animated saving dots component
@@ -74,7 +75,9 @@ export default function NoteEditorScreen() {
   const [content, setContent] = useState('');
   const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'saved' | 'error'>('idle');
   const [isPreview, setIsPreview] = useState(false);
+  const [selection, setSelection] = useState({ start: 0, end: 0 });
   const isInitialized = useRef(false);
+  const textInputRef = useRef<TextInput>(null);
 
   // ── Init from Convex data (once) ──
   useEffect(() => {
@@ -110,6 +113,47 @@ export default function NoteEditorScreen() {
 
     save();
   }, [debouncedTitle, debouncedContent]);
+
+  // ── Insert markdown syntax handler ──
+  const handleInsert = useCallback((toolKey: string) => {
+    const tool = TOOLS.find(t => t.key === toolKey);
+    if (!tool) return;
+
+    const selectedText = content.slice(selection.start, selection.end);
+    const before = content.slice(0, selection.start);
+    const after = content.slice(selection.end);
+
+    let newText: string;
+    let newCursorPos: number;
+
+    if (tool.block) {
+      // Block element: insert at line start
+      const lineStart = before.lastIndexOf('\n') + 1;
+      const beforeLine = content.slice(0, lineStart);
+      const lineEnd = selection.end === selection.start
+        ? (content.indexOf('\n', lineStart) === -1 ? content.length : content.indexOf('\n', lineStart))
+        : selection.end;
+      const line = content.slice(lineStart, lineEnd);
+      const afterLine = content.slice(lineEnd);
+      newText = beforeLine + tool.prefix + line + afterLine;
+      newCursorPos = lineStart + tool.prefix.length + line.length;
+    } else {
+      // Inline element: wrap selection
+      if (selectedText) {
+        newText = before + tool.prefix + selectedText + tool.suffix + after;
+        newCursorPos = selection.start + tool.prefix.length + selectedText.length + tool.suffix.length;
+      } else {
+        newText = before + tool.prefix + tool.suffix + after;
+        newCursorPos = selection.start + tool.prefix.length;
+      }
+    }
+
+    setContent(newText);
+    setTimeout(() => {
+      textInputRef.current?.focus();
+      setSelection({ start: newCursorPos, end: newCursorPos });
+    }, 50);
+  }, [content, selection]);
 
   // ── 3-dots action sheet ──
   const handleMoreOptions = useCallback(() => {
@@ -213,16 +257,15 @@ export default function NoteEditorScreen() {
           </View>
 
           {/* ════════════════════════════
-              TOOLBAR PLACEHOLDER
+              FORMATTING TOOLBAR
           ════════════════════════════ */}
-          <View className="h-11 border-b border-gray-800 items-center justify-center">
-            <Text className="text-xs text-gray-800">toolbar — coming in 8C</Text>
-          </View>
+          <NoteToolbar onInsert={handleInsert} />
 
           {/* ════════════════════════════
               CONTENT AREA
           ════════════════════════════ */}
           <TextInput
+            ref={textInputRef}
             className="flex-1 px-4 py-4 text-white text-base leading-6"
             placeholder="mulai menulis..."
             placeholderTextColor="#4B5563"
@@ -231,6 +274,8 @@ export default function NoteEditorScreen() {
             scrollEnabled
             value={content}
             onChangeText={setContent}
+            selection={selection}
+            onSelectionChange={(e) => setSelection(e.nativeEvent.selection)}
             style={{
               fontFamily: Platform.select({
                 ios: 'Courier New',
