@@ -164,9 +164,9 @@ export default function PromptsVaultScreen() {
         {prompts === undefined ? (
           <LoadingSkeleton rows={4} />
         ) : allPrompts.length === 0 ? (
-          <EmptyState message="Belum ada prompt. Buat template AI pertamamu!" />
+          <EmptyState type="prompts" />
         ) : filteredPrompts.length === 0 ? (
-          <EmptyState message="Tidak ada prompt untuk filter ini." />
+          <EmptyState type="prompts-filtered" />
         ) : (
           <FlatList
             data={filteredPrompts}

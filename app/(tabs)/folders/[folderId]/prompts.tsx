@@ -62,7 +62,7 @@ export default function FolderPromptsScreen() {
       {prompts === undefined ? (
         <LoadingSkeleton rows={4} />
       ) : prompts.length === 0 ? (
-        <EmptyState message="Belum ada prompt di folder ini." />
+        <EmptyState type="prompts" />
       ) : (
         <FlatList
           data={prompts}

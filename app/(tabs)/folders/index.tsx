@@ -119,7 +119,7 @@ export default function FolderGridScreen() {
         {folders === undefined ? (
           <LoadingSkeleton rows={4} />
         ) : filteredFolders.length === 0 ? (
-          <EmptyState message="Belum ada folder. Buat folder pertamamu!" />
+          <EmptyState type="folders" />
         ) : (
           <FlatList
             data={filteredFolders}

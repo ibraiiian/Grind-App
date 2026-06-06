@@ -39,7 +39,7 @@ export default function FolderNotesScreen() {
 
   if (notes.length === 0) return (
     <View className="flex-1 bg-black px-5 pt-4">
-      <EmptyState message="Belum ada catatan di folder ini." />
+      <EmptyState type="notes" />
       <TouchableOpacity
         onPress={handleCreateNote}
         className="absolute bottom-6 right-6 w-14 h-14 bg-white

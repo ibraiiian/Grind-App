@@ -71,7 +71,9 @@ export default function FolderTasksScreen() {
       {tasks === undefined ? (
         <LoadingSkeleton rows={4} />
       ) : tasks.length === 0 ? (
-        <EmptyState message="Belum ada task di folder ini." />
+        <EmptyState type="tasks" />
+      ) : filteredTasks.length === 0 ? (
+        <EmptyState type="tasks-filtered" />
       ) : (
         <FlatList
           data={filteredTasks}

@@ -166,11 +166,11 @@ export default function GlobalTasksScreen() {
         {tasks === undefined ? (
           <LoadingSkeleton rows={5} />
         ) : sections.length === 0 ? (
-          <EmptyState 
-            message={activeTaskFilter === 'all' 
-              ? "Belum ada task. Tambahkan dulu!" 
-              : "Tidak ada task untuk filter ini."} 
-          />
+          tasks.length === 0 ? (
+            <EmptyState type="tasks" />
+          ) : (
+            <EmptyState type="tasks-filtered" />
+          )
         ) : (
           <SectionList
             sections={sections}

@@ -177,7 +177,7 @@ export default function HomeScreen() {
         {upcomingTasks === undefined ? (
           <LoadingSkeleton rows={3} />
         ) : upcomingTasks.length === 0 ? (
-          <EmptyState message="no upcoming deadlines ✦" />
+          <EmptyState type="upcoming" />
         ) : (
           <View className="gap-y-3">
             {upcomingTasks.map((task) => (
@@ -229,7 +229,7 @@ export default function HomeScreen() {
             {inboxItems === undefined ? (
               <LoadingSkeleton rows={3} />
             ) : inboxItems.length === 0 ? (
-              <EmptyState message="inbox zero. you're crushing it ✦" />
+              <EmptyState type="inbox" />
             ) : (
               <View className="gap-y-3 relative">
                 {/* Decorative burst lines bottom left of inbox */}
