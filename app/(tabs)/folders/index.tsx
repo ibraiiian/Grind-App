@@ -7,7 +7,6 @@ import { Ionicons } from '@expo/vector-icons';
 import { useFolders } from '@/hooks/useFolders';
 import { useTaskCounts } from '@/hooks/useTasks';
 import { FolderCard } from '@/components/FolderCard';
-import { BurstLines, DotGrid, SmileyDoodle } from '@/components/ui/Doodles';
 import { SmileyOrnament, SparkleSmOrnament } from '@/components/DoodleOrnaments';
 import { LoadingSkeleton } from '@/components/LoadingSkeleton';
 import { EmptyState } from '@/components/EmptyState';
@@ -87,9 +86,6 @@ export default function FolderGridScreen() {
           <View className="flex-1 relative">
             <View className="flex-row items-end">
               <Text className="font-black text-[38px] text-white lowercase tracking-tight">my folders.</Text>
-              <View className="ml-2 mb-2">
-                <SmileyDoodle width={36} height={36} color="#fff" />
-              </View>
             </View>
             <Text className="text-sm text-gray-500 mt-1">
               {activeFolders.length} active · {archived.length} archived
@@ -120,7 +116,7 @@ export default function FolderGridScreen() {
 
         {/* FOLDER GRID */}
         {folders === undefined ? (
-          <LoadingSkeleton rows={4} />
+          <LoadingSkeleton variant="folder-grid" count={4} />
         ) : filteredFolders.length === 0 ? (
           <EmptyState type="folders" />
         ) : (

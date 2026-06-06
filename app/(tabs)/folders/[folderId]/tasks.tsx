@@ -69,7 +69,7 @@ export default function FolderTasksScreen() {
 
       {/* TASK LIST */}
       {tasks === undefined ? (
-        <LoadingSkeleton rows={4} />
+        <LoadingSkeleton variant="task-list" count={4} />
       ) : tasks.length === 0 ? (
         <EmptyState type="tasks" />
       ) : filteredTasks.length === 0 ? (

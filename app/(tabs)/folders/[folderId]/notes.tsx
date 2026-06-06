@@ -33,7 +33,7 @@ export default function FolderNotesScreen() {
 
   if (notes === undefined) return (
     <View className="flex-1 bg-black px-5 pt-4">
-      <LoadingSkeleton rows={4} />
+      <LoadingSkeleton variant="note-list" count={4} />
     </View>
   );
 

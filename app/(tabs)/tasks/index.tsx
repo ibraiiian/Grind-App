@@ -167,7 +167,7 @@ export default function GlobalTasksScreen() {
           ═══════════════════════════════════════════════ */}
       <View className="flex-1 px-5">
         {tasks === undefined ? (
-          <LoadingSkeleton rows={5} />
+          <LoadingSkeleton variant="task-list" count={5} />
         ) : sections.length === 0 ? (
           tasks.length === 0 ? (
             <EmptyState type="tasks" />

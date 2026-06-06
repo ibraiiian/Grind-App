@@ -180,7 +180,7 @@ export default function HomeScreen() {
         <SectionHeader title="UPCOMING DEADLINES" type="deadlines" />
 
         {upcomingTasks === undefined ? (
-          <LoadingSkeleton rows={3} />
+          <LoadingSkeleton count={3} />
         ) : upcomingTasks.length === 0 ? (
           <EmptyState type="upcoming" />
         ) : (
@@ -232,7 +232,7 @@ export default function HomeScreen() {
             />
 
             {inboxItems === undefined ? (
-              <LoadingSkeleton rows={3} />
+              <LoadingSkeleton count={3} />
             ) : inboxItems.length === 0 ? (
               <EmptyState type="inbox" />
             ) : (

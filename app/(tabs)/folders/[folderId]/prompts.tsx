@@ -60,7 +60,7 @@ export default function FolderPromptsScreen() {
   return (
     <View className="flex-1 px-5 pt-4">
       {prompts === undefined ? (
-        <LoadingSkeleton rows={4} />
+        <LoadingSkeleton variant="prompt-list" count={4} />
       ) : prompts.length === 0 ? (
         <EmptyState type="prompts" />
       ) : (

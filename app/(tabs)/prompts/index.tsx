@@ -164,7 +164,7 @@ export default function PromptsVaultScreen() {
             D. PROMPT LIST
         ══════════════════════════════ */}
         {prompts === undefined ? (
-          <LoadingSkeleton rows={4} />
+          <LoadingSkeleton variant="prompt-list" count={4} />
         ) : allPrompts.length === 0 ? (
           <EmptyState type="prompts" />
         ) : filteredPrompts.length === 0 ? (
