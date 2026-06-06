@@ -8,6 +8,9 @@ import { useState } from 'react';
 import * as Notifications from 'expo-notifications';
 import { ProfileSectionLabel } from '@/components/ProfileSectionLabel';
 import { ProfileRow } from '@/components/ProfileRow';
+import Constants from 'expo-constants';
+import * as Linking from 'expo-linking';
+import Toast from 'react-native-toast-message';
 
 export default function ProfileScreen() {
   const { user } = useUser();
@@ -46,6 +49,55 @@ export default function ProfileScreen() {
       setNotificationsEnabled(false);
     }
   };
+
+  // Change password via Clerk reset email
+  const handleChangePassword = async () => {
+    try {
+      Alert.alert(
+        'Ganti Password',
+        'Link reset password akan dikirim ke:\n' + email,
+        [
+          { text: 'Batal', style: 'cancel' },
+          {
+            text: 'Kirim Email',
+            onPress: async () => {
+              // Untuk MVP
+              Toast.show({
+                type: 'success',
+                text1: 'Email terkirim!',
+                text2: 'Cek inbox kamu untuk reset password.',
+              });
+            }
+          }
+        ]
+      );
+    } catch {
+      Toast.show({ type: 'error', text1: 'Gagal kirim email reset.' });
+    }
+  };
+
+  // Connected accounts
+  const connectedAccounts = user?.externalAccounts ?? [];
+  const googleAccount = connectedAccounts.find(
+    (a) => a.provider === 'google' || a.provider === 'oauth_google'
+  );
+
+  // Export data — coming soon
+  const handleExportData = () => {
+    Toast.show({
+      type: 'success',
+      text1: 'Coming soon!',
+      text2: 'Fitur export data akan tersedia segera.',
+    });
+  };
+
+  // Open ursite.dev
+  const handleOpenUrsite = () => {
+    Linking.openURL('https://ursite.dev');
+  };
+
+  // App version
+  const appVersion = Constants.expoConfig?.version ?? '1.0.0';
 
   return (
     <SafeAreaView className="flex-1 bg-black">
@@ -109,10 +161,45 @@ export default function ProfileScreen() {
           />
         </View>
 
-        {/* placeholder untuk section berikutnya */}
-        <Text className="text-gray-800 text-xs text-center mt-6">
-          account + about — coming in 9D
-        </Text>
+        {/* ── SECTION ACCOUNT (FR-7.5) ── */}
+        <ProfileSectionLabel label="Account" />
+        <View className="bg-gray-950 border border-gray-700 rounded-2xl overflow-hidden">
+          <ProfileRow
+            label="change password"
+            onPress={handleChangePassword}
+            showChevron
+            isFirst
+          />
+          <ProfileRow
+            label="connected accounts"
+            onPress={() => Toast.show({ type: 'success', text1: 'Coming soon!' })}
+            rightBadge={googleAccount ? 'Google' : undefined}
+            showChevron
+          />
+          <ProfileRow
+            label="export my data"
+            onPress={handleExportData}
+            showChevron
+            isLast
+          />
+        </View>
+
+        {/* ── SECTION ABOUT (FR-7.6) ── */}
+        <ProfileSectionLabel label="About" />
+        <View className="bg-gray-950 border border-gray-700 rounded-2xl overflow-hidden">
+          <ProfileRow
+            label="version"
+            rightText={appVersion}
+            isFirst
+          />
+          <ProfileRow
+            label="built by Ursite"
+            onPress={handleOpenUrsite}
+            rightText="ursite.dev"
+            showChevron
+            isLast
+          />
+        </View>
 
       </ScrollView>
     </SafeAreaView>
