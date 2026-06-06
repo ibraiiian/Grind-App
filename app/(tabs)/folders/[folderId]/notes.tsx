@@ -55,6 +55,11 @@ export default function FolderNotesScreen() {
       <FlatList
         data={notes}
         keyExtractor={(item) => item._id}
+        removeClippedSubviews={true}
+        maxToRenderPerBatch={10}
+        windowSize={5}
+        initialNumToRender={8}
+        getItemLayout={undefined}
         renderItem={({ item }) => (
           <NoteCard
             note={item}

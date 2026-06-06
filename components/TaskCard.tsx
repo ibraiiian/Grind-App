@@ -21,7 +21,7 @@ type TaskCardProps = {
   onDelete?: () => void;
 };
 
-export function TaskCard({ task, folderName, showFolderName = false, onToggleDone, onDelete }: TaskCardProps) {
+function TaskCardComponent({ task, folderName, showFolderName = false, onToggleDone, onDelete }: TaskCardProps) {
   const isDone = task.status === 'DONE';
 
   const renderRightActions = (progress: any, dragX: any) => {
@@ -85,3 +85,11 @@ export function TaskCard({ task, folderName, showFolderName = false, onToggleDon
     </Swipeable>
   );
 }
+
+export const TaskCard = React.memo(TaskCardComponent, (prev, next) =>
+  prev.task._id === next.task._id &&
+  prev.task.status === next.task.status &&
+  prev.task.deadline === next.task.deadline &&
+  prev.task.isUrgent === next.task.isUrgent &&
+  prev.task.title === next.task.title
+);

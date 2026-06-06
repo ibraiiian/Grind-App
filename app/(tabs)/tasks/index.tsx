@@ -179,6 +179,10 @@ export default function GlobalTasksScreen() {
             sections={sections}
             keyExtractor={(item) => (item as any)._id}
             showsVerticalScrollIndicator={false}
+            removeClippedSubviews={true}
+            maxToRenderPerBatch={8}
+            windowSize={5}
+            initialNumToRender={8}
             contentContainerStyle={{ paddingBottom: 100 }}
             renderSectionHeader={({ section }) => (
               <View className="flex-row items-center mb-3 mt-4">

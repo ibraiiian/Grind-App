@@ -79,6 +79,11 @@ export default function FolderTasksScreen() {
           data={filteredTasks}
           keyExtractor={(item) => item._id}
           showsVerticalScrollIndicator={false}
+          removeClippedSubviews={true}
+          maxToRenderPerBatch={10}
+          windowSize={5}
+          initialNumToRender={8}
+          getItemLayout={undefined}
           contentContainerStyle={{ paddingBottom: 100 }}
           renderItem={({ item, index }) => (
             <View className="relative">

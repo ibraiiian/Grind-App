@@ -1,3 +1,4 @@
+import React from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 import { Id } from '@/convex/_generated/dataModel';
 import { formatRelativeTime } from '@/lib/utils';
@@ -13,7 +14,7 @@ type NoteCardProps = {
   onDelete: () => void;
 };
 
-export function NoteCard({ note, onPress, onDelete }: NoteCardProps) {
+function NoteCardComponent({ note, onPress, onDelete }: NoteCardProps) {
   const preview = note.content?.replace(/[#*`\[\]]/g, '').trim() ?? '';
 
   return (
@@ -37,3 +38,9 @@ export function NoteCard({ note, onPress, onDelete }: NoteCardProps) {
     </TouchableOpacity>
   );
 }
+
+export const NoteCard = React.memo(NoteCardComponent, (prev, next) =>
+  prev.note._id === next.note._id &&
+  prev.note.title === next.note.title &&
+  prev.note.content === next.note.content
+);

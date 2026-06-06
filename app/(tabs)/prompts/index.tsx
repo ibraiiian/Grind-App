@@ -174,6 +174,11 @@ export default function PromptsVaultScreen() {
             data={filteredPrompts}
             keyExtractor={item => item._id}
             showsVerticalScrollIndicator={false}
+            removeClippedSubviews={true}
+            maxToRenderPerBatch={10}
+            windowSize={5}
+            initialNumToRender={8}
+            getItemLayout={undefined}
             contentContainerStyle={{ paddingBottom: 140 }}
             ItemSeparatorComponent={() => <View className="h-3" />}
             renderItem={({ item, index }) => (

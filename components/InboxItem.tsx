@@ -7,6 +7,7 @@
  * Swipe right → process to folder (white)
  */
 
+import React from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { Swipeable } from 'react-native-gesture-handler';
@@ -41,7 +42,7 @@ function renderRightActions() {
 
 import ChevronRight from '@/assets/svg/icons/chevron-right.svg';
 
-export function InboxItem({ item, onDelete, onProcess }: InboxItemProps) {
+function InboxItemComponent({ item, onDelete, onProcess }: InboxItemProps) {
   return (
     <Swipeable
       renderLeftActions={renderLeftActions}
@@ -65,3 +66,8 @@ export function InboxItem({ item, onDelete, onProcess }: InboxItemProps) {
     </Swipeable>
   );
 }
+
+export const InboxItem = React.memo(InboxItemComponent, (prev, next) =>
+  prev.item._id === next.item._id &&
+  prev.item.content === next.item.content
+);

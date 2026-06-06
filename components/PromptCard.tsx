@@ -1,3 +1,4 @@
+import React from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 import { Id } from '@/convex/_generated/dataModel';
 import { Ionicons } from '@expo/vector-icons';
@@ -17,7 +18,7 @@ type PromptCardProps = {
   onLongPress?: () => void;
 };
 
-export function PromptCard({ prompt, onFillAndCopy, onCopyRaw, onLongPress }: PromptCardProps) {
+function PromptCardComponent({ prompt, onFillAndCopy, onCopyRaw, onLongPress }: PromptCardProps) {
   const varsCount = parseVariables(prompt.promptTemplate).length;
   const iconName = FOLDER_ICONS[prompt.icon as FolderIconKey] || FOLDER_ICONS['star'];
 
@@ -86,3 +87,10 @@ export function PromptCard({ prompt, onFillAndCopy, onCopyRaw, onLongPress }: Pr
     </TouchableOpacity>
   );
 }
+
+export const PromptCard = React.memo(PromptCardComponent, (prev, next) =>
+  prev.prompt._id === next.prompt._id &&
+  prev.prompt.title === next.prompt.title &&
+  prev.prompt.promptTemplate === next.prompt.promptTemplate &&
+  JSON.stringify(prev.prompt.tags) === JSON.stringify(next.prompt.tags)
+);

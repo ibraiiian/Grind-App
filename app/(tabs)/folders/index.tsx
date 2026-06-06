@@ -131,6 +131,11 @@ export default function FolderGridScreen() {
             columnWrapperStyle={{ gap: 12 }}
             contentContainerStyle={{ gap: 12, paddingBottom: 120 }}
             showsVerticalScrollIndicator={false}
+            removeClippedSubviews={true}
+            maxToRenderPerBatch={10}
+            windowSize={5}
+            initialNumToRender={8}
+            getItemLayout={undefined}
             renderItem={({ item }) => (
               <FolderGridItem 
                 item={item} 

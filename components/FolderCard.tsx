@@ -1,3 +1,4 @@
+import React from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { FOLDER_ICONS, FolderIconKey } from '@/constants/icons';
@@ -16,7 +17,7 @@ type FolderCardProps = {
   onLongPress: () => void;
 };
 
-export function FolderCard({ folder, taskCount, noteCount, onPress, onLongPress }: FolderCardProps) {
+function FolderCardComponent({ folder, taskCount, noteCount, onPress, onLongPress }: FolderCardProps) {
   const iconName = FOLDER_ICONS[folder.icon as FolderIconKey] || 'ribbon-outline';
 
   const taskText = taskCount === 1 ? '1 task' : `${taskCount} tasks`;
@@ -49,3 +50,12 @@ export function FolderCard({ folder, taskCount, noteCount, onPress, onLongPress 
     </TouchableOpacity>
   );
 }
+
+export const FolderCard = React.memo(FolderCardComponent, (prev, next) =>
+  prev.folder._id === next.folder._id &&
+  prev.folder.name === next.folder.name &&
+  prev.folder.colorHex === next.folder.colorHex &&
+  prev.folder.icon === next.folder.icon &&
+  prev.taskCount === next.taskCount &&
+  prev.noteCount === next.noteCount
+);
