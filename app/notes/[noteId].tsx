@@ -1,6 +1,6 @@
 import {
   View, Text, TextInput, TouchableOpacity,
-  KeyboardAvoidingView, Platform, Alert, Animated,
+  KeyboardAvoidingView, Platform, Alert, Animated, ScrollView,
 } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useState, useRef, useEffect, useCallback } from 'react';
@@ -12,6 +12,9 @@ import { useNote } from '@/hooks/useNotes';
 import { useMutation } from 'convex/react';
 import { api } from '@/convex/_generated/api';
 import { NoteToolbar, TOOLS } from '@/components/NoteToolbar';
+import Markdown from 'react-native-markdown-display';
+import { markdownStyles } from '@/lib/markdownStyles';
+import { NoteCodeBlock } from '@/components/NoteCodeBlock';
 
 // ────────────────────────────────────
 // Animated saving dots component
@@ -259,31 +262,64 @@ export default function NoteEditorScreen() {
           {/* ════════════════════════════
               FORMATTING TOOLBAR
           ════════════════════════════ */}
-          <NoteToolbar onInsert={handleInsert} />
+          {!isPreview && <NoteToolbar onInsert={handleInsert} />}
 
           {/* ════════════════════════════
               CONTENT AREA
           ════════════════════════════ */}
-          <TextInput
-            ref={textInputRef}
-            className="flex-1 px-4 py-4 text-white text-base leading-6"
-            placeholder="mulai menulis..."
-            placeholderTextColor="#4B5563"
-            multiline
-            textAlignVertical="top"
-            scrollEnabled
-            value={content}
-            onChangeText={setContent}
-            selection={selection}
-            onSelectionChange={(e) => setSelection(e.nativeEvent.selection)}
-            style={{
-              fontFamily: Platform.select({
-                ios: 'Courier New',
-                android: 'monospace',
-                default: 'monospace',
-              }),
-            }}
-          />
+          <View className="flex-1">
+            {isPreview ? (
+              <ScrollView
+                className="flex-1"
+                contentContainerStyle={{ paddingHorizontal: 16, paddingVertical: 16, paddingBottom: 40 }}
+              >
+                {content.trim() ? (
+                  <Markdown
+                    style={markdownStyles as any}
+                    rules={{
+                      fence: (node: any) => (
+                        <NoteCodeBlock
+                          key={node.key}
+                          content={node.content}
+                          language={node.info ?? undefined}
+                        />
+                      ),
+                    }}
+                  >
+                    {content}
+                  </Markdown>
+                ) : (
+                  <Text className="text-gray-700 text-sm italic text-center mt-8">
+                    Belum ada konten untuk di-preview.
+                  </Text>
+                )}
+              </ScrollView>
+            ) : (
+              <ScrollView className="flex-1">
+                <TextInput
+                  ref={textInputRef}
+                  multiline
+                  scrollEnabled={false}
+                  className="flex-1 text-white text-base leading-6 px-4 py-4"
+                  placeholder="mulai menulis..."
+                  placeholderTextColor="#333333"
+                  value={content}
+                  onChangeText={setContent}
+                  selection={selection}
+                  onSelectionChange={(e) => setSelection(e.nativeEvent.selection)}
+                  style={{
+                    minHeight: 400,
+                    textAlignVertical: 'top',
+                    fontFamily: Platform.select({
+                      ios: 'Courier New',
+                      android: 'monospace',
+                      default: 'monospace',
+                    }),
+                  }}
+                />
+              </ScrollView>
+            )}
+          </View>
         </View>
       </KeyboardAvoidingView>
     </SafeAreaView>

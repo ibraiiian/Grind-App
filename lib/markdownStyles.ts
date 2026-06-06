@@ -1,0 +1,85 @@
+import { StyleSheet, Platform } from 'react-native';
+
+export const markdownStyles = StyleSheet.create({
+  body: {
+    color: '#EEEEEE',
+    fontSize: 15,
+    lineHeight: 24,
+    backgroundColor: 'transparent',
+  },
+  heading1: {
+    color: '#FFFFFF',
+    fontSize: 26,
+    fontWeight: '800',
+    marginTop: 20,
+    marginBottom: 8,
+  },
+  heading2: {
+    color: '#FFFFFF',
+    fontSize: 20,
+    fontWeight: '700',
+    marginTop: 16,
+    marginBottom: 6,
+  },
+  heading3: {
+    color: '#FFFFFF',
+    fontSize: 17,
+    fontWeight: '600',
+    marginTop: 12,
+    marginBottom: 4,
+  },
+  strong: {
+    color: '#FFFFFF',
+    fontWeight: '700',
+  },
+  em: {
+    color: '#CCCCCC',
+    fontStyle: 'italic',
+  },
+  code_inline: {
+    color: '#EEEEEE',
+    backgroundColor: '#1A1A1A',
+    fontFamily: Platform.OS === 'ios' ? 'Courier New' : 'monospace',
+    paddingHorizontal: 5,
+    paddingVertical: 1,
+    borderRadius: 4,
+    fontSize: 13,
+  },
+  fence: {
+    backgroundColor: '#0A0A0A',
+    borderRadius: 8,
+    padding: 12,
+    marginVertical: 8,
+    borderWidth: 1,
+    borderColor: '#1A1A1A',
+  },
+  code_block: {
+    color: '#EEEEEE',
+    fontFamily: Platform.OS === 'ios' ? 'Courier New' : 'monospace',
+    fontSize: 13,
+    lineHeight: 20,
+  },
+  bullet_list: { marginVertical: 4 },
+  ordered_list: { marginVertical: 4 },
+  list_item: { color: '#EEEEEE', marginVertical: 2 },
+  bullet_list_icon: { color: '#888888', marginRight: 8 },
+  link: { color: '#FFFFFF', textDecorationLine: 'underline' },
+  blockquote: {
+    backgroundColor: '#0A0A0A',
+    borderLeftColor: '#333333',
+    borderLeftWidth: 3,
+    paddingLeft: 12,
+    paddingVertical: 8,
+    marginVertical: 8,
+    color: '#888888',
+  },
+  hr: {
+    backgroundColor: '#333333',
+    height: 1,
+    marginVertical: 12,
+  },
+  paragraph: {
+    color: '#EEEEEE',
+    marginVertical: 4,
+  },
+});
