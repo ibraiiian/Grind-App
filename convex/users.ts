@@ -48,7 +48,7 @@ export const getUserStats = query({
       .collect();
 
     return {
-      taskCount: tasks.length,
+      taskCount: tasks.filter((t) => t.status !== 'DONE').length,
       folderCount: folders.length,
       promptCount: prompts.length,
     };
@@ -97,7 +97,7 @@ export const upsertUser = mutation({
 export const updatePushToken = mutation({
   args: {
     clerkId: v.string(),
-    expoPushToken: v.string(),
+    expoPushToken: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
     const user = await ctx.db
