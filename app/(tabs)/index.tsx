@@ -9,7 +9,7 @@
  * D. Inbox Section — hidden in focus mode
  */
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import {
   View,
   Text,
@@ -55,11 +55,20 @@ export default function HomeScreen() {
   const { isFocusMode, toggleFocusMode } = useAppStore();
 
   const [captureText, setCaptureText] = useState('');
+  const [currentTime, setCurrentTime] = useState(new Date());
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentTime(new Date());
+    }, 60000); // update every minute
+    return () => clearInterval(timer);
+  }, []);
 
   const firstName = user?.firstName || 'User';
   const fullName = user?.fullName || 'User';
+  const greeting = getTimeGreeting(currentTime);
+  const timeString = currentTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
   const initials = getInitials(fullName);
-  const greeting = getTimeGreeting();
 
   // ─── Quick Capture Submit ────────────────────────────
   const handleCapture = async () => {
@@ -108,8 +117,11 @@ export default function HomeScreen() {
           {/* Left: Greeting + Focus Mode */}
           <View className="flex-1">
             <View className="flex-row items-center">
-              <Text className="text-white font-bold text-base mr-1">good morning,</Text>
+              <Text className="text-white font-bold text-base mr-1">{greeting},</Text>
               <Sparkle4Point width={24} height={24} color="#fff" />
+              <View className="bg-gray-800 rounded-md px-2 py-0.5 ml-2">
+                <Text className="text-gray-300 text-xs font-bold">{timeString}</Text>
+              </View>
             </View>
             <Text className="text-white text-[32px] font-black mt-1 tracking-tight">
               {firstName} 👊

@@ -51,11 +51,13 @@ export function formatRelativeTime(date: Date | number): string {
  * - 12:00 – 16:59 → 'good afternoon'
  * - 17:00 – 23:59 → 'good evening'
  */
-export function getTimeGreeting(): string {
-  const h = new Date().getHours();
+export function getTimeGreeting(date: Date = new Date()): string {
+  const h = date.getHours();
+  if (h < 5) return 'good night';
   if (h < 12) return 'good morning';
   if (h < 17) return 'good afternoon';
-  return 'good evening';
+  if (h < 21) return 'good evening';
+  return 'good night';
 }
 
 // ─── User Initials ────────────────────────────────────

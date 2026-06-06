@@ -25,6 +25,6 @@ export function useFolders() {
   };
 }
 
-export function useFolderById(folderId: Id<'folders'>) {
-  return useQuery(api.folders.getFolder, { id: folderId });
+export function useFolderById(folderId?: Id<'folders'>) {
+  return useQuery(api.folders.getFolder, folderId ? { id: folderId } : "skip");
 }
