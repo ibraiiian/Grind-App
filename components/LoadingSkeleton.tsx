@@ -44,11 +44,13 @@ export function LoadingSkeleton({ rows = 3 }: LoadingSkeletonProps) {
         <Animated.View
           key={i}
           className="bg-gray-900 rounded-xl"
-          style={{
-            opacity,
-            height: 56,
-            width: widths[i % widths.length],
-          }}
+          style={
+            {
+              opacity,
+              height: 56,
+              width: widths[i % widths.length],
+            } as any
+          }
         />
       ))}
     </View>

@@ -8,6 +8,7 @@ import { View, ActivityIndicator } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 import Toast from "react-native-toast-message";
+// @ts-ignore
 import "../global.css";
 import { colors } from "@/constants/colors";
 
@@ -61,7 +62,7 @@ function AuthGuard() {
       try {
         await upsertUser({
           clerkId: user.id,
-          email: user.emailAddresses?.[0]?.emailAddress ?? '',
+          email: (user as any)?.emailAddresses?.[0]?.emailAddress ?? (user as any)?.primaryEmailAddress?.emailAddress ?? '',
           name: user.fullName ?? undefined,
         });
       } catch (err) {

@@ -50,7 +50,7 @@ export default function SignUpScreen() {
     // Validate
     const result = signUpSchema.safeParse({ fullName, email, password });
     if (!result.success) {
-      const firstIssue = result.error.issues?.[0] || result.error.errors?.[0];
+      const firstIssue = result.error.issues?.[0];
       Toast.show({
         type: "error",
         text1: "Validation Error",
@@ -79,7 +79,7 @@ export default function SignUpScreen() {
         // Sync to Convex
         if (!isDummyKey) {
           await upsertUser({
-            clerkId: signUpAttempt.createdUserId,
+            clerkId: signUpAttempt.createdUserId ?? '',
             email: email,
             name: fullName,
           });

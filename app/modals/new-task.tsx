@@ -30,8 +30,8 @@ import DotGrid from '@/assets/svg/ui-elements/dot-grid.svg';
 const taskSchema = z.object({
   title: z.string().min(1, 'Judul tidak boleh kosong').max(100),
   description: z.string().max(500).optional(),
-  deadline: z.number({ invalid_type_error: 'Deadline wajib diisi' }),
-  folderId: z.string({ invalid_type_error: 'Folder wajib dipilih' }).min(1, 'Folder wajib dipilih'),
+  deadline: z.number(),
+  folderId: z.string().min(1, 'Folder wajib dipilih'),
   tags: z.array(z.string()).max(5),
   isUrgent: z.boolean(),
 });
@@ -248,7 +248,7 @@ export default function NewTaskModal() {
                 <Ionicons name="folder-outline" size={20} color={colors.gray500} className="mr-3" />
                 {selectedFolder ? (
                   <View className="flex-row items-center">
-                    <View className="w-2.5 h-2.5 rounded-full mr-2" style={{ backgroundColor: selectedFolder.color || '#888' }} />
+                    <View className="w-2.5 h-2.5 rounded-full mr-2" style={{ backgroundColor: selectedFolder.colorHex || '#888' }} />
                     <Text className="text-white text-base font-medium">{selectedFolder.name}</Text>
                   </View>
                 ) : (

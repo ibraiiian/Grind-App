@@ -92,5 +92,5 @@ export const AppConvexProvider = isDummyKey
       return React.createElement(ConvexProvider, { client }, children);
     }
   : function RealConvexProvider({ children, client, useAuth: uAuth }: { children: React.ReactNode, client: any, useAuth: any }) {
-      return React.createElement(ConvexProviderWithClerk, { client, useAuth: uAuth }, children);
+      return React.createElement(ConvexProviderWithClerk as any, { client, useAuth: uAuth }, children);
     };

@@ -23,7 +23,7 @@ export default function ProfileScreen() {
   const [notificationsEnabled, setNotificationsEnabled] = useState(false);
 
   const fullName = user?.fullName ?? user?.firstName ?? '';
-  const email = user?.emailAddresses?.[0]?.emailAddress ?? '';
+  const email = (user as any)?.emailAddresses?.[0]?.emailAddress ?? (user as any)?.primaryEmailAddress?.emailAddress ?? '';
   const initials = getInitials(fullName);
 
   const handleNotifToggle = async (enabled: boolean) => {
@@ -80,9 +80,9 @@ export default function ProfileScreen() {
   };
 
   // Connected accounts
-  const connectedAccounts = user?.externalAccounts ?? [];
+  const connectedAccounts = (user as any)?.externalAccounts ?? [];
   const googleAccount = connectedAccounts.find(
-    (a) => a.provider === 'google' || a.provider === 'oauth_google'
+    (a: any) => a.provider === 'google' || a.provider === 'oauth_google'
   );
 
   // Export data — coming soon

@@ -59,7 +59,7 @@ export default function NewFolderModal() {
         onClose={() => router.back()}
         backdropComponent={renderBackdrop}
         backgroundStyle={{ backgroundColor: colors.gray950 }}
-        handleIndicatorStyle={{ backgroundColor: colors.gray600, width: 40 }}
+        handleIndicatorStyle={{ backgroundColor: colors.gray500, width: 40 }}
       >
         <BottomSheetView className="flex-1 px-5 pt-2">
           <Text className="font-black text-2xl text-white mb-6">new folder.</Text>
