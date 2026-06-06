@@ -21,7 +21,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
-import Toast from 'react-native-toast-message';
+import { toast } from '@/lib/toast';
 
 import { useUser } from '@/lib/clerk';
 import { useInbox } from '@/hooks/useInbox';
@@ -77,9 +77,9 @@ export default function HomeScreen() {
         // Haptics not available on web
       }
 
-      Toast.show({ text1: 'Added to inbox!', type: 'success' });
+      toast.success('Added to inbox!');
     } catch {
-      Toast.show({ text1: 'Gagal menambah item', type: 'error' });
+      toast.error('Gagal menambah item');
     }
   };
 
@@ -243,11 +243,7 @@ export default function HomeScreen() {
                     item={item}
                     onDelete={() => deleteItem({ id: item._id })}
                     onProcess={() => {
-                      Toast.show({
-                        text1: 'Coming soon',
-                        text2: 'Folder selection akan tersedia di prompt berikutnya',
-                        type: 'info',
-                      });
+                      toast.comingSoon();
                     }}
                   />
                 ))}

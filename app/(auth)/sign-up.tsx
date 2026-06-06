@@ -15,7 +15,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { Feather, FontAwesome5 } from "@expo/vector-icons";
 import * as WebBrowser from "expo-web-browser";
 import { DottedBackground } from "@/components/ui/DottedBackground";
-import Toast from "react-native-toast-message";
+import { toast } from '@/lib/toast';
 import { z } from "zod";
 import { useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
@@ -51,11 +51,7 @@ export default function SignUpScreen() {
     const result = signUpSchema.safeParse({ fullName, email, password });
     if (!result.success) {
       const firstIssue = result.error.issues?.[0];
-      Toast.show({
-        type: "error",
-        text1: "Validation Error",
-        text2: firstIssue?.message || "Invalid input",
-      });
+      toast.error('Validation Error', firstIssue?.message || 'Invalid input');
       return;
     }
 
@@ -89,11 +85,7 @@ export default function SignUpScreen() {
       } else {
         // Needs email verification (if configured in Clerk)
         // Note: PRD doesn't mention OTP screen, assuming auto-verify or no verify for MVP
-        Toast.show({
-          type: "info",
-          text1: "Check your email",
-          text2: "A verification code might have been sent.",
-        });
+        toast.info('Check your email', 'A verification code might have been sent.');
       }
     } catch (err: any) {
       console.error("Sign up error:", err);
@@ -105,11 +97,7 @@ export default function SignUpScreen() {
         errorMsg = err.message;
       }
       
-      Toast.show({
-        type: "error",
-        text1: "Error",
-        text2: errorMsg || "Unknown error occurred",
-      });
+      toast.error('Error', errorMsg || 'Unknown error occurred');
     } finally {
       setIsLoading(false);
     }

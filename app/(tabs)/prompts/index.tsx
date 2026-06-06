@@ -4,7 +4,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import * as Clipboard from 'expo-clipboard';
-import Toast from 'react-native-toast-message';
+import { toast } from '@/lib/toast';
 
 import { useAllPrompts } from '@/hooks/usePrompts';
 import { PromptCard } from '@/components/PromptCard';
@@ -47,7 +47,7 @@ export default function PromptsVaultScreen() {
 
   const handleCopyRaw = async (template: string) => {
     await Clipboard.setStringAsync(template);
-    Toast.show({ text1: 'Copied!', text2: 'Template disalin tanpa isi variabel', type: 'info' });
+    toast.copied();
   };
 
   const handleLongPress = (id: any, title: string) => {

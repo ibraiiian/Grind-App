@@ -15,7 +15,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { Feather, FontAwesome5 } from "@expo/vector-icons";
 import * as WebBrowser from "expo-web-browser";
 import { DiamondBackground } from "@/components/ui/DiamondBackground";
-import Toast from "react-native-toast-message";
+import { toast } from '@/lib/toast';
 
 // Warm up the browser for OAuth
 WebBrowser.maybeCompleteAuthSession();
@@ -36,11 +36,7 @@ export default function SignInScreen() {
     if (!isLoaded) return;
     
     if (!email || !password) {
-      Toast.show({
-        type: "error",
-        text1: "Error",
-        text2: "Please enter your email and password.",
-      });
+      toast.error('Error', 'Please enter your email and password.');
       return;
     }
 
@@ -57,11 +53,7 @@ export default function SignInScreen() {
         router.replace("/(tabs)");
       } else {
         console.error(JSON.stringify(signInAttempt, null, 2));
-        Toast.show({
-          type: "error",
-          text1: "Sign In Failed",
-          text2: "Please check your credentials and try again.",
-        });
+        toast.error('Sign In Failed', 'Please check your credentials and try again.');
       }
     } catch (err: any) {
       console.error("Sign in error:", err);
@@ -73,11 +65,7 @@ export default function SignInScreen() {
         errorMsg = err.message;
       }
       
-      Toast.show({
-        type: "error",
-        text1: "Error",
-        text2: errorMsg,
-      });
+      toast.error('Error', errorMsg);
     } finally {
       setIsLoading(false);
     }

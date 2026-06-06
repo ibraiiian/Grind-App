@@ -14,7 +14,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { BottomSheetModal, BottomSheetBackdrop, BottomSheetScrollView } from '@gorhom/bottom-sheet';
 import { TouchableOpacity as GHTouchableOpacity } from 'react-native-gesture-handler';
 import DateTimePicker from '@react-native-community/datetimepicker';
-import Toast from 'react-native-toast-message';
+import { toast } from '@/lib/toast';
 import { z } from 'zod';
 
 import { useUser } from '@/lib/clerk';
@@ -62,7 +62,7 @@ export default function NewTaskModal() {
     const newTag = tagInput.trim().toLowerCase();
     if (newTag && !tags.includes(newTag)) {
       if (tags.length >= 5) {
-        Toast.show({ text1: 'Maksimal 5 tags', type: 'error' });
+        toast.error('Maksimal 5 tags');
       } else {
         setTags([...tags, newTag]);
         setTagInput('');
@@ -111,10 +111,10 @@ export default function NewTaskModal() {
         tags: parsed.data.tags,
         isUrgent: parsed.data.isUrgent,
       });
-      Toast.show({ text1: 'Task berhasil ditambahkan', type: 'success' });
+      toast.success('Task berhasil ditambahkan');
       router.back();
     } catch (err) {
-      Toast.show({ text1: 'Gagal tambah task', type: 'error' });
+      toast.error('Gagal tambah task');
     } finally {
       setLoading(false);
     }

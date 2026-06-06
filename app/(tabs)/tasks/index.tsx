@@ -5,7 +5,7 @@ import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { BottomSheetModal, BottomSheetBackdrop, BottomSheetScrollView } from '@gorhom/bottom-sheet';
 import { TouchableOpacity as GHTouchableOpacity } from 'react-native-gesture-handler';
-import Toast from 'react-native-toast-message';
+import { toast } from '@/lib/toast';
 
 import { useAllTasks } from '@/hooks/useTasks';
 import { useFolders } from '@/hooks/useFolders';
@@ -63,7 +63,7 @@ export default function GlobalTasksScreen() {
 
   // ─── Handlers ──────────────────────────────────────────────
   const handleSortPress = () => {
-    Toast.show({ text1: 'Sorted by deadline', type: 'success' });
+    toast.success('Sorted by deadline');
   };
 
   const handleToggleTask = (id: string, currentStatus: string) => {

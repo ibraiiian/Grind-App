@@ -2,7 +2,7 @@ import React, { useState, forwardRef, useImperativeHandle, useRef } from 'react'
 import { View, Text, TextInput, TouchableOpacity, ScrollView, KeyboardAvoidingView, Platform, ActivityIndicator, Modal } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { z } from 'zod';
-import Toast from 'react-native-toast-message';
+import { toast } from '@/lib/toast';
 
 import { useUser } from '@/lib/clerk';
 import { useAllPrompts } from '@/hooks/usePrompts';
@@ -69,7 +69,7 @@ export const AddPromptSheet = forwardRef<AddPromptSheetRef>((props, ref) => {
     const newTag = tagInput.trim().toLowerCase();
     if (newTag && !tags.includes(newTag)) {
       if (tags.length >= 5) {
-        Toast.show({ text1: 'Maksimal 5 tags', type: 'error' });
+        toast.error('Maksimal 5 tags');
       } else {
         setTags([...tags, newTag]);
         setTagInput('');
@@ -113,11 +113,11 @@ export const AddPromptSheet = forwardRef<AddPromptSheetRef>((props, ref) => {
         icon: parsed.data.icon,
       });
       
-      Toast.show({ text1: 'Prompt berhasil disimpan!', type: 'success' });
+      toast.success('Prompt berhasil disimpan!');
       resetForm();
       setVisible(false);
     } catch (err) {
-      Toast.show({ text1: 'Gagal menyimpan prompt', type: 'error' });
+      toast.error('Gagal menyimpan prompt');
     } finally {
       setLoading(false);
     }

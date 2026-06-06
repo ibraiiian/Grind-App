@@ -11,7 +11,7 @@ import { ProfileSectionLabel } from '@/components/ProfileSectionLabel';
 import { ProfileRow } from '@/components/ProfileRow';
 import Constants from 'expo-constants';
 import * as Linking from 'expo-linking';
-import Toast from 'react-native-toast-message';
+import { toast } from '@/lib/toast';
 
 export default function ProfileScreen() {
   const { user } = useUser();
@@ -65,17 +65,13 @@ export default function ProfileScreen() {
             text: 'Kirim Email',
             onPress: async () => {
               // Untuk MVP
-              Toast.show({
-                type: 'success',
-                text1: 'Email terkirim!',
-                text2: 'Cek inbox kamu untuk reset password.',
-              });
+              toast.success('Email terkirim!', 'Cek inbox kamu untuk reset password.');
             }
           }
         ]
       );
     } catch {
-      Toast.show({ type: 'error', text1: 'Gagal kirim email reset.' });
+      toast.error('Gagal kirim email reset.');
     }
   };
 
@@ -87,11 +83,7 @@ export default function ProfileScreen() {
 
   // Export data — coming soon
   const handleExportData = () => {
-    Toast.show({
-      type: 'success',
-      text1: 'Coming soon!',
-      text2: 'Fitur export data akan tersedia segera.',
-    });
+    toast.comingSoon();
   };
 
   // Open ursite.dev
@@ -113,7 +105,7 @@ export default function ProfileScreen() {
               await signOut();
               router.replace('/(auth)/sign-in');
             } catch {
-              Toast.show({ type: 'error', text1: 'Gagal sign out.' });
+              toast.error('Gagal sign out.');
             }
           },
         },
@@ -197,7 +189,7 @@ export default function ProfileScreen() {
           />
           <ProfileRow
             label="connected accounts"
-            onPress={() => Toast.show({ type: 'success', text1: 'Coming soon!' })}
+            onPress={() => toast.comingSoon()}
             rightBadge={googleAccount ? 'Google' : undefined}
             showChevron
           />
