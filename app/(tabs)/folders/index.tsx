@@ -7,13 +7,14 @@ import { Ionicons } from '@expo/vector-icons';
 import { useFolders } from '@/hooks/useFolders';
 import { useTaskCounts } from '@/hooks/useTasks';
 import { FolderCard } from '@/components/FolderCard';
+import { BurstLines, DotGrid, SmileyDoodle } from '@/components/ui/Doodles';
+import { SmileyOrnament, SparkleSmOrnament } from '@/components/DoodleOrnaments';
 import { LoadingSkeleton } from '@/components/LoadingSkeleton';
 import { EmptyState } from '@/components/EmptyState';
 import { colors } from '@/constants/colors';
 import { Id } from '@/convex/_generated/dataModel';
 
 // SVGs
-import SmileyDoodle from '@/assets/svg/doodles/smiley.svg';
 import SquiggleArrow from '@/assets/svg/doodles/squiggle-arrow.svg';
 import DotGrid from '@/assets/svg/ui-elements/dot-grid.svg';
 import BurstLines from '@/assets/svg/doodles/burst-lines.svg';
@@ -93,6 +94,8 @@ export default function FolderGridScreen() {
             <Text className="text-sm text-gray-500 mt-1">
               {activeFolders.length} active · {archived.length} archived
             </Text>
+            <SmileyOrnament style={{ position: 'absolute', right: 56, top: 28 }} />
+            <SparkleSmOrnament style={{ position: 'absolute', right: 48, top: 22 }} />
           </View>
           
           <TouchableOpacity 

@@ -22,7 +22,7 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { toast } from '@/lib/toast';
-
+import { SparkleOrnament, SparkleSmOrnament, DotsGridOrnament } from '@/components/DoodleOrnaments';
 import { useUser } from '@/lib/clerk';
 import { useInbox } from '@/hooks/useInbox';
 import { useUpcomingTasks } from '@/hooks/useTasks';
@@ -95,6 +95,11 @@ export default function HomeScreen() {
             A. HEADER ROW
             ═══════════════════════════════════════════════ */}
         <View className="flex-row items-start justify-between mt-2 mb-8 relative">
+          {/* Ornamen */}
+          <SparkleOrnament style={{ position: 'absolute', top: 8, right: 80 }} />
+          <SparkleSmOrnament style={{ position: 'absolute', top: 20, right: 72 }} />
+          <DotsGridOrnament style={{ position: 'absolute', top: 4, right: 4 }} />
+
           {/* Top Right Dot Grid Pattern */}
           <View className="absolute right-[-10px] top-[40px] opacity-70 z-[-1]">
             <DotGrid width={80} height={80} color="#333" />

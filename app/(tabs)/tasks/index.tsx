@@ -14,6 +14,7 @@ import { buildTaskSections, type TaskForGrouping } from '@/lib/deadline';
 import { TaskCard } from '@/components/TaskCard';
 import { EmptyState } from '@/components/EmptyState';
 import { LoadingSkeleton } from '@/components/LoadingSkeleton';
+import { SparkleOrnament, LockedInBadge, SparkleSmOrnament } from '@/components/DoodleOrnaments';
 import { colors } from '@/constants/colors';
 
 // SVGs
@@ -104,6 +105,8 @@ export default function GlobalTasksScreen() {
           <Text className="text-sm text-gray-500 mt-1">
             {totalCount} tasks · sorted by deadline
           </Text>
+          <SparkleOrnament style={{ position: 'absolute', right: 52, top: 12 }} />
+          <SparkleSmOrnament style={{ position: 'absolute', right: 44, top: 24 }} />
         </View>
 
         <TouchableOpacity 
@@ -232,6 +235,7 @@ export default function GlobalTasksScreen() {
       {/* ═══════════════════════════════════════════════
           E. FAB BUTTON
           ═══════════════════════════════════════════════ */}
+      <LockedInBadge style={{ position: 'absolute', bottom: 32, right: 84, zIndex: 50 }} />
       <View className="absolute bottom-6 left-0 right-0 flex-row items-end justify-between px-6 pointer-events-none">
         {/* Left doodles */}
         <View className="flex-row items-end pb-2">

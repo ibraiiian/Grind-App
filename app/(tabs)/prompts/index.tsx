@@ -11,6 +11,7 @@ import { PromptCard } from '@/components/PromptCard';
 import { AddPromptSheet, AddPromptSheetRef } from '@/components/AddPromptSheet';
 import { LoadingSkeleton } from '@/components/LoadingSkeleton';
 import { EmptyState } from '@/components/EmptyState';
+import { SparkleOrnament } from '@/components/DoodleOrnaments';
 
 // Doodles & Stickers — matching design reference
 import BurstLines from '@/assets/svg/doodles/burst-lines.svg';
@@ -97,6 +98,7 @@ export default function PromptsVaultScreen() {
             <Text className="text-sm text-gray-500 mt-0.5">
               {allPrompts.length} templates saved
             </Text>
+            <SparkleOrnament style={{ position: 'absolute', right: 52, top: 10 }} />
           </View>
 
           {/* Center star doodle (absolute) */}
