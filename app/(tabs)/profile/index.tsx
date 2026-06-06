@@ -1,6 +1,7 @@
-import { View, Text, ScrollView, Alert } from 'react-native';
+import { View, Text, ScrollView, Alert, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useUser } from '@/lib/clerk';
+import { useUser, useAuth } from '@/lib/clerk';
+import { useRouter } from 'expo-router';
 import { StatsCard } from '@/components/StatsCard';
 import { useUserStats, useUpsertUser } from '@/hooks/useUserStats';
 import { getInitials } from '@/lib/utils';
@@ -14,6 +15,8 @@ import Toast from 'react-native-toast-message';
 
 export default function ProfileScreen() {
   const { user } = useUser();
+  const { signOut } = useAuth();
+  const router = useRouter();
   const { stats } = useUserStats();
   const { updatePushToken } = useUpsertUser();
 
@@ -94,6 +97,28 @@ export default function ProfileScreen() {
   // Open ursite.dev
   const handleOpenUrsite = () => {
     Linking.openURL('https://ursite.dev');
+  };
+
+  const handleSignOut = () => {
+    Alert.alert(
+      'Sign Out',
+      'Yakin mau keluar dari GRIND?',
+      [
+        { text: 'Batal', style: 'cancel' },
+        {
+          text: 'Sign Out',
+          style: 'destructive',
+          onPress: async () => {
+            try {
+              await signOut();
+              router.replace('/(auth)/sign-in');
+            } catch {
+              Toast.show({ type: 'error', text1: 'Gagal sign out.' });
+            }
+          },
+        },
+      ]
+    );
   };
 
   // App version
@@ -200,6 +225,22 @@ export default function ProfileScreen() {
             isLast
           />
         </View>
+
+        {/* ── SIGN OUT BUTTON (FR-7.7) ── */}
+        <TouchableOpacity
+          onPress={handleSignOut}
+          className="mt-6 mb-2 border border-gray-700 rounded-xl h-14 items-center justify-center"
+          activeOpacity={0.7}
+        >
+          <Text className="text-white font-medium text-base">
+            sign out
+          </Text>
+        </TouchableOpacity>
+
+        {/* Version watermark di paling bawah */}
+        <Text className="text-center text-gray-800 text-xs mt-4 mb-2">
+          GRIND v{appVersion} · built with ♥ by Ursite
+        </Text>
 
       </ScrollView>
     </SafeAreaView>
