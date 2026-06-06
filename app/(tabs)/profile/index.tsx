@@ -1,17 +1,51 @@
-import { View, Text, ScrollView } from 'react-native';
+import { View, Text, ScrollView, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useUser } from '@/lib/clerk';
 import { StatsCard } from '@/components/StatsCard';
-import { useUserStats } from '@/hooks/useUserStats';
+import { useUserStats, useUpsertUser } from '@/hooks/useUserStats';
 import { getInitials } from '@/lib/utils';
+import { useState } from 'react';
+import * as Notifications from 'expo-notifications';
+import { ProfileSectionLabel } from '@/components/ProfileSectionLabel';
+import { ProfileRow } from '@/components/ProfileRow';
 
 export default function ProfileScreen() {
   const { user } = useUser();
   const { stats } = useUserStats();
+  const { updatePushToken } = useUpsertUser();
+
+  const [notificationsEnabled, setNotificationsEnabled] = useState(false);
 
   const fullName = user?.fullName ?? user?.firstName ?? '';
   const email = user?.emailAddresses?.[0]?.emailAddress ?? '';
   const initials = getInitials(fullName);
+
+  const handleNotifToggle = async (enabled: boolean) => {
+    if (enabled) {
+      const { status } = await Notifications.requestPermissionsAsync();
+      if (status !== 'granted') {
+        Alert.alert(
+          'Izin Diperlukan',
+          'Aktifkan izin notifikasi di Pengaturan HP untuk menerima reminder deadline.',
+          [{ text: 'OK' }]
+        );
+        return;
+      }
+      try {
+        const token = await Notifications.getExpoPushTokenAsync();
+        await updatePushToken({
+          clerkId: user!.id,
+          expoPushToken: token.data
+        });
+        setNotificationsEnabled(true);
+      } catch {
+        Alert.alert('Error', 'Gagal mengaktifkan notifikasi.');
+      }
+    } else {
+      await updatePushToken({ clerkId: user!.id, expoPushToken: undefined });
+      setNotificationsEnabled(false);
+    }
+  };
 
   return (
     <SafeAreaView className="flex-1 bg-black">
@@ -57,10 +91,27 @@ export default function ProfileScreen() {
           <StatsCard value={stats?.promptCount} label="prompts" />
         </View>
 
+        {/* ── SECTION PREFERENCES (FR-7.4) ── */}
+        <ProfileSectionLabel label="Preferences" />
+        <View className="bg-gray-950 border border-gray-700 rounded-2xl overflow-hidden">
+          <ProfileRow
+            label="notifications"
+            switchValue={notificationsEnabled}
+            onSwitchChange={handleNotifToggle}
+            isFirst
+          />
+          <ProfileRow
+            label="dark mode"
+            switchValue={true}
+            switchDisabled={true}
+            lockIcon={true}
+            isLast
+          />
+        </View>
+
         {/* placeholder untuk section berikutnya */}
-        <View className="mt-6 h-px bg-gray-900" />
-        <Text className="text-gray-800 text-xs text-center mt-4">
-          preferences + account + about — coming in 9C & 9D
+        <Text className="text-gray-800 text-xs text-center mt-6">
+          account + about — coming in 9D
         </Text>
 
       </ScrollView>
