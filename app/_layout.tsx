@@ -1,5 +1,6 @@
-import { ClerkProvider, useAuth, AppConvexProvider } from "@/lib/clerk";
-import { ConvexReactClient } from "convex/react";
+import { ClerkProvider, useAuth, AppConvexProvider, useUser } from "@/lib/clerk";
+import { ConvexReactClient, useMutation } from "convex/react";
+import { api } from "@/convex/_generated/api";
 import { Stack, useRouter, useSegments } from "expo-router";
 import * as SecureStore from "expo-secure-store";
 import { useEffect } from "react";
@@ -36,6 +37,8 @@ const tokenCache = {
 
 function AuthGuard() {
   const { isLoaded, isSignedIn } = useAuth();
+  const { user } = useUser();
+  const upsertUser = useMutation(api.users.upsertUser);
   const segments = useSegments();
   const router = useRouter();
 
@@ -50,6 +53,25 @@ function AuthGuard() {
       router.replace("/(auth)/splash");
     }
   }, [isSignedIn, isLoaded, segments]);
+
+  useEffect(() => {
+    if (!isLoaded || !isSignedIn || !user) return;
+
+    const syncUser = async () => {
+      try {
+        await upsertUser({
+          clerkId: user.id,
+          email: user.emailAddresses?.[0]?.emailAddress ?? '',
+          name: user.fullName ?? undefined,
+        });
+      } catch (err) {
+        // Gagal sync tidak fatal — log saja
+        console.warn('Failed to sync user to Convex:', err);
+      }
+    };
+
+    syncUser();
+  }, [isLoaded, isSignedIn, user?.id]);
 
   if (!isLoaded) {
     return (
