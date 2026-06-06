@@ -95,8 +95,8 @@ export default function ProfileScreen() {
   };
 
   // Open ursite.dev
-  const handleOpenUrsite = () => {
-    Linking.openURL('https://ursite.dev');
+  const handleOpenIbraDev = () => {
+    Linking.openURL('https://ibra.dev');
   };
 
   const handleSignOut = () => {
@@ -218,9 +218,9 @@ export default function ProfileScreen() {
             isFirst
           />
           <ProfileRow
-            label="built by Ursite"
-            onPress={handleOpenUrsite}
-            rightText="ursite.dev"
+            label="built by Ibra"
+            onPress={handleOpenIbraDev}
+            rightText="Ibra.dev"
             showChevron
             isLast
           />
@@ -239,7 +239,7 @@ export default function ProfileScreen() {
 
         {/* Version watermark di paling bawah */}
         <Text className="text-center text-gray-800 text-xs mt-4 mb-2">
-          GRIND v{appVersion} · built with ♥ by Ursite
+          GRIND v{appVersion} · built with ♥ by Ibra
         </Text>
 
       </ScrollView>
